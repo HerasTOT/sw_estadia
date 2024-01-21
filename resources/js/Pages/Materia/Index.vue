@@ -17,21 +17,19 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
-import { reactive, toRefs, ref } from 'vue';
 import NotificationBar from "@/components/NotificationBar.vue";
+
 
 
 export default {
     props: {
         titulo: { type: String, required: true },
-        records: {
+        Materia: {
             type: Object,
-            default: {},
-            required: true,
+            required: true
         },
         routeName: { type: String, required: true },
-        loadingResults: { type: Boolean, required: true, default: true },
-        search: { type: String, required: true },
+        loadingResults: { type: Boolean, required: true, default: true }
     },
     components: {
         Link,
@@ -46,13 +44,18 @@ export default {
         Pagination,
         NotificationBar
     },
-
-    setup(props) {
+    setup() {
         const form = useForm({
-            name: '',
-            
+            nombre: '',
+            clave: '',
+            cuatrimestre: '',
+            tipo:'',
+            No_horas_presenciales:'',
+            No_horas_no_presenciales:'',
+            periodo:'',
+            nivel:'',
+            status: ''
         });
-
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -64,44 +67,25 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("profile.destroy", id));
+                    form.delete(route("materia.destroy", id));
                 }
             });
         };
 
-        const isLoading = ref(false);
-
-        const state = reactive({
-            filters: {
-                page: props.records.current_page,
-                search: props.search,
-                status: props.status ?? 1,
-            },
-        });
-
-        const search = () => {
-            props.loadingResults = true;
-            Inertia.replace(route(`${props.routeName}index`, state.filters));
-        };
-
         return {
-            ...toRefs(state),
-            search,
-            eliminar,
-            mdiMonitorCellphone,
+            form, eliminar, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
             mdiApplicationEdit, mdiTrashCan,
-            isLoading
-        };
+        }
     }
+
 }
 </script>
 
 <template>
     <LayoutMain>
-
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
             <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                     fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
@@ -111,13 +95,8 @@ export default {
                         d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                 </svg>
             </a>
-            <BaseButton :href="route(`${routeName}create`)" color="info" label=" Agregar estudiante" />
-            <BaseButton :href="route(`${routeName}create`)" color="info" label=" Agregar profesor" />
-
-
         </SectionTitleLineWithButton>
-
-
+       
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
         </NotificationBar>
@@ -126,7 +105,7 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox v-if="records.data.length < 1">
+        <CardBox v-if="Materia.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
@@ -136,16 +115,19 @@ export default {
                     <tr>
                         <th />
                         <th>Nombre</th>
-                        <th>Apellido Paterno</th>
-                        <th>Apellido Materno</th>
-                        <th>Telefono</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Acciones</th>
+                        <th>Clave</th>
+                        <th>Cuatrimestre</th>
+                        <th>Tipo</th>
+                        <th>No Horas presenciales</th>
+                        <th>No Horas no presenciales</th>
+                        <th>Nivel</th>
+                        <th>Status</th>
+                        <th></th>
+                        <th />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in records.data" :key="item.id">
+                    <tr v-for="item in Materia.data" :key="item.id">
                         <td class="align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-book-half" viewBox="0 0 16 16">
@@ -153,32 +135,31 @@ export default {
                                     d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
                             </svg>
                         </td>
-                        
-                        <td data-label="nombre">
-                            {{ item.name }}
+                        <td data-label="Nombre">
+                            {{ item.nombre }}
                         </td>
-                        <td data-label="Apellido Paterno">
-                            {{ item.apellido_paterno }}
+                        <td data-label="clave">
+                            {{ item.clave }}
                         </td>
-                        <td data-label="Apellido Materno">
-                            {{ item.apellido_materno }}
+                        <td data-label="cuatrimestre">
+                            {{ item.cuatrimestre }}
                         </td>
-                        <td data-label="telefono">
-                            {{ item.numero }}
+                        <td data-label="tipo">
+                            {{ item.tipo }}
                         </td>
-                        <td data-label="telefono">
-                            {{ item.email }}
+                        <td data-label="No_horas_presenciales">
+                            {{ item.No_horas_presenciales }}
                         </td>
-                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                        <td data-label="No_horas_no_presenciales">
+                            {{ item.No_horas_no_presenciales }}
+                        </td>
+                        <td data-label="nivel">
+                            {{ item.nivel }}
+                        </td>
+                        <td data-label="Status">
+                            {{ item.status }}
+                        </td>
 
-                                <a :href="route('users.assign-roles-and-permissions.view', item.id)"> <button
-                                        class="bg-transparent dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-blue-700 text-blue-700 font-semibold hover:text-black py-2 px-4 border border-blue-500  dark:hover:border-transparent hover:border-transparent rounded">
-                                        Asignar Rol
-                                    </button>
-                                </a>
-                            </BaseButtons>
-                        </td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
                                 <BaseButton color="info" :icon="mdiApplicationEdit" small
@@ -193,8 +174,8 @@ export default {
 
 
 
-            <Pagination :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
-            </Pagination>
+            <Pagination :currentPage="Materia.current_page" :links="Materia.links"
+                :total="Materia.links.length - 2"></Pagination>
         </CardBox>
 
     </LayoutMain>

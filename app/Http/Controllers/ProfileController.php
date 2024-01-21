@@ -81,12 +81,10 @@ class ProfileController extends Controller
         return redirect()->route("{$this->routeName}index")->with('success', 'Rol asignado con éxito!');
     }
 
-    public function create()
+    public function create():response
     {
         return Inertia::render("{$this->source}Create", [
-            'roles' => Role::pluck('name'),
-            'workplaces' => Workplace::all(),
-            'colonies' => Colony::all(),
+            
             'titulo' => 'Agregar Usuario',
             'routeName' => $this->routeName,
         ]);

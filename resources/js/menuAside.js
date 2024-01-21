@@ -28,6 +28,8 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
+
+  
   /*  {
      href: "/tables",
      to: "/tables",
@@ -71,7 +73,7 @@ export default [
      label: "Error",
      icon: mdiAlertCircle,
    }, */
-  {
+  /*  {
     href: "/announcements",
     label: "Convocatorias",
     icon: mdiClockCheck,
@@ -89,7 +91,7 @@ export default [
     to: "/events",
     icon: mdiClockTimeEleven,
     role: "Admin"
-  },
+  },*/
   {
     label: "Seguridad",
     icon: mdiSecurity,
@@ -120,7 +122,7 @@ export default [
     icon: mdiViewListOutline,
     role: "Admin",
     menu: [
-      {
+ /*       {
         permission: 'institutions.index',
         label: "Instituciones",
         href: "/institutions",
@@ -138,11 +140,17 @@ export default [
         to: "/assesstment",
         permission: 'assesstments.index',
       },
-      {
-        label: "Tematicas",
+        label: "Grupo",
         href: "/knowledges",
         to: "/knowledges",
         permission: "thematics.index",
+      },*/
+      
+      {
+        label: "Materias",
+        href: "/materia",
+        to: "/materia",
+        permission: 'materia.index',
       },
     ],
   },
@@ -166,6 +174,18 @@ export default [
     role: "Evaluador"
   },
 
+  {
+    href:"/grupo",
+    label: "Grupos",
+    icon: mdiBookshelf,
+    role: "Admin",
+  }, 
+  {
+    href:"/usuarios",
+    label: "Usuario",
+    icon: mdiBookshelf,
+    role: "Admin",
+  }, 
   /* {
     href:"/announcements",
     label: "Convocatorias",

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Proceedings;
-use App\Http\Requests\StoreProceedingsRequest;
-use App\Http\Requests\UpdateProceedingsRequest;
+use App\Models\Alumno;
+use App\Http\Requests\StoreAlumnoRequest;
+use App\Http\Requests\UpdateAlumnoRequest;
 
-class ProceedingsController extends Controller
+class AlumnoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class ProceedingsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreProceedingsRequest  $request
+     * @param  \App\Http\Requests\StoreAlumnoRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProceedingsRequest $request)
+    public function store(StoreAlumnoRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class ProceedingsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Proceedings  $proceedings
+     * @param  \App\Models\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function show(Proceedings $proceedings)
+    public function show(Alumno $alumno)
     {
         //
     }
@@ -53,10 +53,10 @@ class ProceedingsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Proceedings  $proceedings
+     * @param  \App\Models\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function edit(Proceedings $proceedings)
+    public function edit(Alumno $alumno)
     {
         //
     }
@@ -64,11 +64,11 @@ class ProceedingsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateProceedingsRequest  $request
-     * @param  \App\Models\Proceedings  $proceedings
+     * @param  \App\Http\Requests\UpdateAlumnoRequest  $request
+     * @param  \App\Models\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProceedingsRequest $request, Proceedings $proceedings)
+    public function update(UpdateAlumnoRequest $request, Alumno $alumno)
     {
         //
     }
@@ -76,10 +76,10 @@ class ProceedingsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Proceedings  $proceedings
+     * @param  \App\Models\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Proceedings $proceedings)
+    public function destroy(Alumno $alumno)
     {
         //
     }

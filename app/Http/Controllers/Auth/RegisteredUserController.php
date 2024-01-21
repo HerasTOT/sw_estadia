@@ -46,24 +46,19 @@ class RegisteredUserController extends Controller
     public function store(array $input): RedirectResponse
     {
         Validator::make($input, [
-            'curp' => ['required', 'string', 'max:18', 'unique:users'],
             'name' => ['required', 'string', 'max:255'],
-            'paternal_surname' => ['required', 'string', 'max:255'],
-            'maternal_surname' => ['required', 'string', 'max:255'],
+            'apellido_paterno' => ['required', 'string', 'max:255'],
+            'apellido_materno' => ['required', 'string', 'max:255'],
+            'numero' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'role' => ['required', 'string',],
-            'colony_id' => ['required', 'integer', 'exists:colonies,id'],
-            'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
-        ])->validate();
+            ])->validate();
 
         $user = User::create([
-            'curp' => $input['curp'],
             'name' => $input['name'],
-            'paternal_surname' => $input['paternal_surname'],
-            'maternal_surname' => $input['maternal_surname'],
-            'colony_id' => $input['colony_id'],
-            'workplace_id' => $input['workplace_id'],
+            'apellido_paterno' => $input['apellido_paterno'],
+            'apellido_materno' => $input['apellido_materno'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ])->assignRole($input['role']);

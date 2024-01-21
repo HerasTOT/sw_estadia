@@ -77,5 +77,22 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'proposals.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'proposals.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'proposals.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+
+        Permission::create(['name' => 'materia.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'materia.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'materia.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'materia.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+
+        Permission::create(['name' => 'grupo.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'grupo.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'grupo.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'grupo.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+        
+        Permission::create(['name' => 'usuarios.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'usuarios.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'usuarios.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'usuarios.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+
+        
     }
 }

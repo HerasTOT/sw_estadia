@@ -25,11 +25,13 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        DB::table('users')->insert(['curp' => 'GOPE011110HNEMNRA8', 'name' => 'ERICK JOSUE', 'paternal_surname' => 'GOMEZ', 'maternal_surname' => 'PINEDA', 'email' => 'ashgomez4@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('Password'), 'colony_id' => '1', 'workplace_id' => '2',]);
+        DB::table('users')->insert(['name' => 'Santiago', 'apellido_paterno' => 'Heras', 'apellido_materno' => 'Gomez','numero' => '7775420768', 'email' => 'admin@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'admin']);
+        
+        /*
         DB::table('users')->insert(['curp' => 'NUOR001129HGRXRBA4', 'name' => 'JOSE ROBERTO', 'paternal_surname' => 'NUÑEZ', 'maternal_surname' => 'ORTIZ', 'email' => 'josuezerod@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
         DB::table('users')->insert(['curp' => 'PIGD690806MNENML05', 'name' => 'DILIA DEL CARMEN', 'paternal_surname' => 'PINEDA', 'maternal_surname' => 'DE GOMEZ', 'email' => 'lalatinajapon4@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
         DB::table('users')->insert(['curp' => 'TAGC011026HMSBZHA1', 'name' => 'CHRISTIAN ARMANDO', 'paternal_surname' => 'TABOADA', 'maternal_surname' => 'GUZMAN', 'email' => 'royer.cj717@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
-
+        */
         $this->call([
             RoleSeeder::class,
             WorkplaceSeeder::class,
@@ -46,9 +48,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::find(1)->assignRole('Admin');
-        User::find(2)->assignRole('Postulante');
-        User::find(3)->assignRole('Evaluador');
-        User::find(4)->assignRole('Evaluador');
+       
 
 
     }

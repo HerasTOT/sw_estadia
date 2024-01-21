@@ -8,7 +8,9 @@ use App\Http\Controllers\ColonyController;
 use App\Http\Controllers\CriteriasController;
 use App\Http\Controllers\DocumentSupportingController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\InstitutionsController;
+use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PdfGenerate;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\RenapoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsuarioController;
 use App\Models\Announcements;
 use App\Models\Areas_knowledge;
 use App\Models\Calendar;
@@ -53,7 +56,7 @@ Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController
 
 Route::get('/dashboard', function () {
     return Inertia::render('HomeView', ['users' => User::all(), 'announcements' =>  Announcements::all(),'proposals' => Proposals::all()]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -127,6 +130,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('calendar', CalendarController::class)->names('calendar');
     Route::resource('criterias', CriteriasController::class)->names('criterias');
     Route::resource('knowledges', AreasKnowledgeController::class)->names('knowledges');
+    Route::resource('materia', MateriaController::class)->names('materia');
+    Route::resource('grupo', GrupoController::class)->names('grupo');
+    //Route::resource('usuarios', UsuarioController::class)->names('usuarios');
+    Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuarios']);
+
+
+
 });
+
 
 require __DIR__ . '/auth.php';

@@ -11,6 +11,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -28,14 +29,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'curp',
         'name',
-        'paternal_surname',
-        'maternal_surname',
+        'apellido_paterno',
+        'apellido_materno',
+        'numero',
         'email',
-        'colony_id',
-        'workplace_id',
         'password',
+        'role',
     ];
 
     /**
@@ -58,6 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 
     /**
      * The accessors to append to the model's array form.
