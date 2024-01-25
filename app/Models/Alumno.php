@@ -8,9 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Alumno extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'cuatrimestre',
+        'matricula',
+        'user_id'
+       ];
     public function grupos()
     {
         return $this->belongsToMany(Grupo::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function usuario()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
 }

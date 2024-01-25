@@ -93,4 +93,9 @@ class User extends Authenticatable implements MustVerifyEmail
             return [$permission['name'] => true];
         });
     }
+
+    public function alumno()
+    {
+        return $this->hasOne(Alumno::class);
+    }
 }

@@ -155,24 +155,24 @@ export default [
     ],
   },
 
-  {
-    href: "/announcements",
-    icon: mdiMonitor,
-    label: "Convocatorias",
-    role: "Postulante"
-  },
-  {
-    href: "/proposals",
-    label: "Tus propuestas",
-    icon: mdiBookshelf,
-    role: "Postulante"
-  },
-  {
-    href: "/proposals",
-    label: "Propuestas",
-    icon: mdiBookshelf,
-    role: "Evaluador"
-  },
+  // {
+  //   href: "/announcements",
+  //   icon: mdiMonitor,
+  //   label: "Convocatorias",
+  //   role: "Postulante"
+  // },
+  // {
+  //   href: "/proposals",
+  //   label: "Tus propuestas",
+  //   icon: mdiBookshelf,
+  //   role: "Postulante"
+  // },
+  // {
+  //   href: "/proposals",
+  //   label: "Propuestas",
+  //   icon: mdiBookshelf,
+  //   role: "Evaluador"
+  // },
 
   {
     href:"/grupo",

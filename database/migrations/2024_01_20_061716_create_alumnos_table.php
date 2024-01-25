@@ -17,8 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('cuatrimestre');
             $table->string('matricula');
-            $table->string('grupo');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->unique()->constrained();
             $table->timestamps();
         });
     }
