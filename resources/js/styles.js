@@ -1,7 +1,7 @@
 export const basic = {
-  aside: "bg-gray-800",
+  aside: "bg-yellow-600",
   asideScrollbars: "aside-scrollbars-gray",
-  asideBrand: "bg-gray-900 text-white",
+  asideBrand: "bg-purple-900 text-white",
   asideMenuItem: "text-gray-300 hover:text-white",
   asideMenuItemActive: "font-bold text-white",
   asideMenuDropdown: "bg-gray-700/50",
@@ -15,7 +15,7 @@ export const white = {
   aside: "bg-white",
   asideScrollbars: "aside-scrollbars-light",
   asideBrand: "",
-  asideMenuItem: "text-black hover:text-blue-600 dark:text-white",
+  asideMenuItem: "text-black hover:text-yellow-600 dark:text-white",
   asideMenuItemActive: "font-bold text-black dark:text-white",
   asideMenuDropdown: "bg-gray-100/75",
   navBarItemLabel: "text-black",

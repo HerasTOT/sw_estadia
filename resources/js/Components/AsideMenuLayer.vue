@@ -20,7 +20,7 @@ const styleStore = useStyleStore();
 const logoutItem = computed(() => ({
   label: "Cerrar Sesion",
   icon: mdiLogout,
-  color: "info",
+  color: "danger",
   isLogout: true,
 }));
 

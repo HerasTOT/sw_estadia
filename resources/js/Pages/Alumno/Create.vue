@@ -15,6 +15,8 @@ export default {
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
         usuarios: { type: String, required: true },
+        users:{type: Object, required: true},
+        roles: { type: Object, required: true },
     },
     components: {
         LayoutMain,
@@ -36,6 +38,13 @@ export default {
             cuatrimestre: '',
             matricula:'',
             user_id: null,
+            name: '',
+            apellido_paterno: '',
+            apellido_materno: '',
+            numero:'',
+            email:'',
+            password:'',
+            role:'Alumno',
         });
 
         return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
@@ -56,20 +65,36 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
-            <FormField >
-                <FormControl v-model="form.cuatrimestre"  placeholder="cuatrimestre"/>
-                <FormControl v-model="form.matricula" placeholder="matricula" />
-                <label for="user_id">Seleccionar Usuario:</label>
-                <select v-model="form.user_id" id="user_id">
-                    <option :value="null" disabled>Seleccione un usuario</option>
-                    <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">{{ usuario.name }}</option>
-                </select>
-              </FormField>
-           
+            
+              
+                <FormField >
+                    <FormControl v-model="form.name"  placeholder="Nombre" />
+                </FormField>
+                <FormField >
+                    <FormControl v-model="form.apellido_paterno" placeholder="Apellido paterno" />
+                </FormField>
+                <FormField >
+                    <FormControl v-model="form.apellido_materno" placeholder="Apellido materno" />
+                </FormField>
+                <FormField >
+                    <FormControl v-model="form.numero" placeholder="Teléfono" />
+                </FormField>
+                <FormField >
+                    <FormControl v-model="form.email" placeholder="email" />
+                </FormField>
+                <FormField >
+                    <FormControl v-model="form.password" placeholder="password" />
+                </FormField>
+                
+                <FormField >
+                    <FormControl v-model="form.cuatrimestre"  placeholder="cuatrimestre"/>
+                    <FormControl v-model="form.matricula" placeholder="matricula" />
+                    
+                </FormField>
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />
-                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
+                    <BaseButton :href="route(`usuarios.index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>
             </template>

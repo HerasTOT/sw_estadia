@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+
 
 class ProfesorController extends Controller
 {
@@ -55,22 +58,34 @@ class ProfesorController extends Controller
             'titulo'      => 'Agregar profesor',
             'routeName'      => $this->routeName,
             'usuarios'  => $usuarios,
+            'roles' => Role::pluck('name'),
         ]);
     }
 
     public function store(StoreProfesorRequest $request)
     {
         $user_id = $request->input('user_id');
-       
-        Profesor::create([
-             'grado_academico' => $request->input('grado_academico'),
-             'area' => $request->input('area'),
-             'user_id' => $user_id,
-     
-         ]);
+        $newUser = user::create([
+            'name' => $request->input('name'),
+            'apellido_paterno' => $request->input('apellido_paterno'),
+            'apellido_materno' => $request->input('apellido_materno'),
+            'numero' => $request->input('numero'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'role' => $request->input('role'),
+            
+            
+        ])->assignRole($request['role']);
+
+        $profesor = new Profesor([
+            'grado_academico' => $request->input('grado_academico'),
+            'area' => $request->input('area'),
+        ]);
+    
+        $newUser->profesor()->save($profesor);
        
  
-         return redirect()->route("profesor.index")->with('message', 'Profesor generado con éxito');
+         return redirect()->route("usuarios.index")->with('message', 'Profesor generado con éxito');
    
     }
 
@@ -79,11 +94,15 @@ class ProfesorController extends Controller
        
     }
 
-    public function edit(Profesor $profesor)
-    {
+    public function edit($id )
+    {   
+        $profesor = Profesor::find($id);
+        $usuario = $profesor->user;
+        
         return Inertia::render("Profesor/Edit", [
             'titulo'      => 'Modificar Alumno',
             'profesor'    => $profesor,
+            'usuario'    =>  $usuario,
             'routeName'      => $this->routeName,
         ]);  
     }
@@ -92,16 +111,25 @@ class ProfesorController extends Controller
     public function update(UpdateProfesorRequest $request,$id)
     {
         $profesor = Profesor::find($id);
+        $usuario = $profesor->user;
         $profesor->update($request->all());
-        return redirect()->route("profesor.index")->with('message', 'Profesor actualizado correctamente!');
+        $usuario->update($request->all());
+        return redirect()->route("usuarios.index")->with('message', 'Profesor actualizado correctamente!');
     }
 
    
     public function destroy($id)
     {
         $profesor = Profesor::find($id);
-        $profesor->delete();
-        return redirect()->route("{$this->routeName}index")->with('success', 'Profesor eliminada con éxito');
+        $usuario = $profesor->user;
 
+        $profesor->delete();
+         $usuario->delete();
+        
+
+        return redirect()->route("usuarios.index")->with('success', 'Profesor eliminada con éxito');
+        
+       
+        
     }
 }

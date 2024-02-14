@@ -1,19 +1,18 @@
 <?php
 
-
+use App\Http\Controllers\AcademicoController;
 use App\Http\Controllers\GrupoController;
-
 use App\Http\Controllers\MateriaController;
-
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
-
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\ProfesorController;
+use App\Http\Controllers\PreguntaController;
+use App\Http\Controllers\RespuestaController;
 use App\Models\Announcements;
 use App\Models\review;
 use App\Models\User;
@@ -90,9 +89,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('materia', MateriaController::class)->names('materia');
     Route::resource('grupo', GrupoController::class)->names('grupo');
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuarios']);
+
+
     Route::resource('alumno', AlumnoController::class)->parameters(['alumno' => 'alumno']);
     //Route::post('/alumnos}', [AlumnoController::class, 'store'])->name('alumnos.store');
     Route::resource('profesor', ProfesorController::class)->parameters(['profesor' => 'profesor']);
+    Route::resource('academico', AcademicoController::class)->names('academico');
+
+    Route::resource('pregunta', PreguntaController::class)->parameters(['pregunta' => 'pregunta']);
+    //Route::get('/academico/{user}/edit', [AcademicoController::class, 'edit'])->name('academico.edit');
+    Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
 
     
     

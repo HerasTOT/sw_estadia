@@ -41,17 +41,21 @@ const submit = () => {
 </script>
 
 <template>
+  
   <LayoutGuest>
     <Head title="Login" />
 
     <SectionFullScreen
       v-slot="{ cardClass }"
       bg="purplePink"
+      style="background-image: url('http://ejemplo_sw_template.test:8080/storage/imagenes/upemor.jpg'); background-size: cover;"
+
     >
       <CardBox
         :class="cardClass"
         is-form
         @submit.prevent="submit"
+
       >
         <FormValidationErrors />
 
@@ -91,20 +95,12 @@ const submit = () => {
             required
           />
         </FormField>
-
-        <FormCheckRadioGroup
-          v-model="form.remember"
-          name="remember"
-          :options="{ remember: 'Recordar' }"
-        />
-
         <BaseDivider />
-
         <BaseLevel>
           <BaseButtons>
             <BaseButton
               type="submit"
-              color="info"
+              color="warning"
               label="Iniciar sesion"
               :class="{ 'opacity-25': form.processing }"
               :disabled="form.processing"
@@ -112,16 +108,11 @@ const submit = () => {
             <BaseButton
               v-if="canResetPassword"
               route-name="password.request"
-              color="info"
+              color="danger"
               outline
               label="Olvidaste tu contraseña?"
             />
-          </BaseButtons>
-          <Link
-            :href="route('register')"
-          >
-            Registrarse
-          </Link>
+          </BaseButtons>      
         </BaseLevel>
       </CardBox>
     </SectionFullScreen>

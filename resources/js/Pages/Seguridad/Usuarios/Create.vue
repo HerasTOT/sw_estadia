@@ -60,16 +60,16 @@ export default {
 
         <CardBox form @submit.prevent="handleSubmit">
             <FormField >
-                <FormControl v-model="form.name"  placeholder="nombre" />
+                <FormControl v-model="form.name"  placeholder="Nombre" />
             </FormField>
             <FormField >
-                <FormControl v-model="form.apellido_paterno" placeholder="apellido_paterno" />
+                <FormControl v-model="form.apellido_paterno" placeholder="Apellido paterno" />
             </FormField>
             <FormField >
-                <FormControl v-model="form.apellido_materno" placeholder="apellido_materno" />
+                <FormControl v-model="form.apellido_materno" placeholder="Apellido materno" />
             </FormField>
             <FormField >
-                <FormControl v-model="form.numero" placeholder="numero" />
+                <FormControl v-model="form.numero" placeholder="Teléfono" />
             </FormField>
             <FormField >
                 <FormControl v-model="form.email" placeholder="email" />
@@ -77,17 +77,8 @@ export default {
             <FormField >
                 <FormControl v-model="form.password" placeholder="password" />
             </FormField>
-            <!-- <FormField >
-                <select 
-                v-model="form.role" 
-              >
-                <option :value="item.id" v-for="item in roles">{{ item.name }}</option>  
-              </select>
-            </FormField> -->
             <FormControl v-model="form.role" id="role" :options="roles" required />
 
-  {{ roles }}
-          
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />

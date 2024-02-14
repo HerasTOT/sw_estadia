@@ -37,7 +37,7 @@ class MateriaController extends Controller
                 $query->where('name',          'LIKE', "%$search%");
                 $query->orWhere('status', 'LIKE', "%$search%");
             }
-        })->paginate(10)->withQueryString();
+        })->paginate(7)->withQueryString();
 
         return Inertia::render("Materia/Index", [
             'titulo'      => 'Catalogo de materia de la carrera de Inginieria de Tecnologías de la Información',

@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+
+
 class AlumnoController extends Controller
 {
     private Alumno $model;
@@ -59,6 +63,7 @@ class AlumnoController extends Controller
             'titulo'      => 'Agregar alumno',
             'routeName'      => $this->routeName,
             'usuarios'  => $usuarios,
+            'roles' => Role::pluck('name'),
         ]);
     }
 
@@ -72,15 +77,27 @@ class AlumnoController extends Controller
     {
         $user_id = $request->input('user_id');
        
-       Alumno::create([
+       
+        $newUser = user::create([
+            'name' => $request->input('name'),
+            'apellido_paterno' => $request->input('apellido_paterno'),
+            'apellido_materno' => $request->input('apellido_materno'),
+            'numero' => $request->input('numero'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'role' => $request->input('role'),
+            
+            
+        ])->assignRole($request['role']);
+        
+        $alumno = new Alumno([
             'cuatrimestre' => $request->input('cuatrimestre'),
             'matricula' => $request->input('matricula'),
-            'user_id' => $user_id,
-    
         ]);
-      
+    
+        $newUser->alumno()->save($alumno);
 
-        return redirect()->route("alumno.index")->with('message', 'Alumno generado con éxito');
+        return redirect()->route("usuarios.index")->with('message', 'Alumno generado con éxito');
   
     }
 
@@ -96,11 +113,15 @@ class AlumnoController extends Controller
      * @param  \App\Models\Alumno  $alumno
      * @return \Illuminate\Http\Response
      */
-    public function edit(Alumno $Alumno)
+    public function edit( $id)
     {
+        $Alumno = Alumno::find($id);
+        $usuario = $Alumno->user;
+        
         return Inertia::render("Alumno/Edit", [
             'titulo'      => 'Modificar Alumno',
             'Alumno'    => $Alumno,
+            'usuario'   => $usuario,
             'routeName'      => $this->routeName,
         ]);
     }
@@ -115,9 +136,11 @@ class AlumnoController extends Controller
     public function update(UpdateAlumnoRequest $request,$id)
     {
         $Alumno = Alumno::find($id);
+        $usuario= $Alumno->user;
         $Alumno->update($request->all());
-        return redirect()->route("alumno.index")->with('message', 'Alumno actualizado correctamente!');
-}
+        $usuario->update($request->all());
+        return redirect()->route("usuarios.index")->with('message', 'Alumno actualizado correctamente!');
+    }
     
 
     /**
@@ -129,8 +152,10 @@ class AlumnoController extends Controller
     public function destroy($id)
     {
         $Alumno = Alumno::find($id);
+        $usuario= $Alumno->user;
         $Alumno->delete();
-        return redirect()->route("{$this->routeName}index")->with('success', 'Alumno eliminada con éxito');
+        $usuario->delete();
+        return redirect()->route("usuarios.index")->with('success', 'Alumno eliminada con éxito');
 
     }
 }

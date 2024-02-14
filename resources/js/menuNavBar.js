@@ -23,12 +23,8 @@ export default [
       {
         href:"/profile",
         icon: mdiAccount,
-        label: "My Profile",
+        label: "Mi perfil",
         to: "/profile",
-      },
-      {
-        icon: mdiCogOutline,
-        label: "Settings",
       },
       {
         isDivider: true,
@@ -43,19 +39,6 @@ export default [
   {
     icon: mdiAccount,
     isRol: true,
-  },
-  {
-    icon: mdiThemeLightDark,
-    label: "Light/Dark",
-    isDesktopNoLabel: true,
-    isToggleLightDark: true,
-  },
-  {
-    icon: mdiGithub,
-    label: "GitHub",
-    isDesktopNoLabel: true,
-    href: "https://github.com/ErickJosue1/propuestas",
-    target: "_blank",
   },
   {
     icon: mdiLogout,

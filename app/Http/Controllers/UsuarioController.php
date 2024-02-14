@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateUsuarioRequest;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Models\Alumno;
+use App\Models\Profesor;
 use App\Models\Modulo;
 use Inertia\Response;
 use Illuminate\Http\Request;
@@ -38,14 +40,21 @@ class UsuarioController extends Controller
 
     public function index(Request $request): Response
     {
+
+        $alumnos = Alumno::with('user')->get();
+        $profesores = Profesor::with('user')->get();
         $usuarios = $this->model::with('roles')
             ->orderBy('id')
             ->paginate(10)
             ->withQueryString();
-    
+
+           
+
         return Inertia::render("{$this->source}Index", [
-            'titulo'   => 'Catálogo de Usuarios',
+            'titulo'   => ' Usuarios',
             'usuarios' => $usuarios,
+            'alumnos' => $alumnos,
+            'profesores' => $profesores,
             'profiles' => Role::get(['id', 'name']),
             'routeName'=> $this->routeName,
             'loadingResults' => false,
@@ -72,8 +81,8 @@ class UsuarioController extends Controller
             'numero' => $request->input('numero'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            //'role' => $request->input('role'),
-            'role' => 'no hace nada'
+            'role' => $request->input('role'),
+            
             
         ])->assignRole($request['role']);
       
@@ -87,28 +96,71 @@ class UsuarioController extends Controller
    
 
    
-
-    public function edit( User $User)
+    public function edit($id)
     {
+        $usuario = User::find($id);
+    
+        // Obtén el alumno específico relacionado con este usuario
+        $alumno = Alumno::where('user_id', $id)->first();
+    
+        // Asegúrate de manejar el caso en que no se encuentre el usuario o el alumno
+        if (!$usuario || !$alumno) {
+            abort(404, 'Usuario o alumno no encontrado');
+        }
+    
         return Inertia::render("Seguridad/Usuarios/Edit", [
-            'titulo'      => 'Modificar Usuario',
-            'User'    => $User,
-            'routeName'      => $this->routeName,
+            'titulo'   => 'Modificar Usuario',
+            'usuario'  => $usuario,
+            'alumno'   => $alumno,
+            'routeName'=> $this->routeName,
         ]);
     }
+
     public function update(UpdateUsuarioRequest $request, $id)
     {
-        $user = user::find($id);
-        $user->update($request->all());
-        return redirect()->route("usuarios.index")->with('message', 'Usuario actualizado correctamente!');
-}
+        $usuario = User::find($id);
+    
+        if (!$usuario) {
+            abort(404, 'Usuario no encontrado');
+        }
+    
+        // Actualiza los datos del usuario
+        $usuario->update($request->all());
+    
+        // Obtén el alumno relacionado con este usuario
+        $alumno = Alumno::where('user_id', $usuario->id)->first();
+    
+        if ($alumno) {
+            // Actualiza los datos del alumno si existe
+            $alumno->update([
+                'cuatrimestre' => $request->input('cuatrimestre'),
+                'matricula'    => $request->input('matricula'),
+                // Otros campos del alumno
+            ]);
+        }
+    
+        return redirect()->route("usuarios.index")->with('message', 'Usuario y alumno actualizados correctamente!');
+    
+    }
 
     
 
-    public function destroy(User $usuarios)
+    public function destroy($alumnoId)
     {
-        $usuarios->delete();
-        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito');
+        $alumno = Alumno::find($alumnoId);
+        $usuario = User::find($alumno->user_id);
+        $alumno->delete();
+
+        if ($usuario) {
+            // Elimina al usuario
+            $usuario->delete();
+        }
+
+        // Finalmente, elimina al alumno
+        
+    return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito');
+
+    
     }
 
 }

@@ -181,17 +181,23 @@ export default [
     role: "Admin",
   }, 
   {
+    href:"/academico",
+    label: "Academico",
+    icon: mdiBookshelf,
+    role: "Alumno",
+  }, 
+  {
+    href:"/academico",
+    label: "Academico",
+    icon: mdiBookshelf,
+    role: "Admin",
+  }, 
+  {
     href:"/usuarios",
     label: "Usuario",
     icon: mdiBookshelf,
     role: "Admin",
   }, 
-  /* {
-    href:"/announcements",
-    label: "Convocatorias",
-    icon: mdiClockCheck,
-    target: "_blank",
-    permission: "announcements.index"
-  }, */
+
 
 ];

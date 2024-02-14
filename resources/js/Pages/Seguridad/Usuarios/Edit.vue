@@ -11,38 +11,42 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'User', 'routeName']);
-const form = useForm({ ...props.User });
+const props = defineProps(['titulo', 'usuario', 'alumno', 'routeName']);
+const form = useForm({ ...props.usuario, ...props.alumno });
 
 const guardar = () => {
-    form.patch(route("usuarios.update", props.User.id));
+    form.put(route("usuarios.update", props.usuario.id, props.alumno.id));
 };
 
 </script>
 
 <template>
     <LayoutMain :title="titulo">
-        <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
-            <Link :href="route(`${routeName}index`)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg>
-            </Link>
-        </SectionTitleLineWithButton>
+
+             <!--
+         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
+         <Link :href="route(`${routeName}index`)">
+          </Link>
+            </SectionTitleLineWithButton>
+            -->
+
 
         <CardBox form @submit.prevent="guardar">
             <FormField label="Nombre">
-                <FormControl v-model="form.name"  placeholder="nombre"/>
+                <FormControl v-model="form.name" placeholder="nombre" />
                 <FormControl v-model="form.apellido_paterno" placeholder="apellido_paterno" />
                 <FormControl v-model="form.apellido_materno" placeholder="apellido_materno" />
                 <FormControl v-model="form.numero" placeholder="numero" />
                 <FormControl v-model="form.email" placeholder="email" />
                 <FormControl v-model="form.password" placeholder="password" />
                 <FormControl v-model="form.role" placeholder="role" />
-               
+            </FormField>
+            <FormField label="Datos del Alumno" v-if="alumno">
+                <FormControl v-model="form.cuatrimestre" placeholder="cuatrimestre" />
+                <FormControl v-model="form.matricula" placeholder="matricula" />
             </FormField>
 
-          
+
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />

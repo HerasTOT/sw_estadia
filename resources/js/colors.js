@@ -82,6 +82,9 @@ export const getButtonColor = (
       warning:
         "hover:bg-yellow-700 hover:border-yellow-700 hover:dark:bg-yellow-600 hover:dark:border-yellow-600",
       info: "hover:bg-blue-700 hover:border-blue-700 hover:dark:bg-blue-600 hover:dark:border-blue-600",
+      purple:
+    "hover:bg-purple-700 hover:border-purple-700 hover:dark:bg-purple-600 hover:dark:border-purple-600",
+
     },
     borders: {
       white: "border-white",
