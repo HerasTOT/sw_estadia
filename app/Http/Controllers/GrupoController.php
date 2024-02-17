@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grupo;
+use App\Models\Materia;
+use App\Models\Grupo_Materias;
 use App\Http\Requests\StoreGrupoRequest;
 use App\Http\Requests\UpdateGrupoRequest;
 use Illuminate\Http\Request;
@@ -33,17 +35,19 @@ class GrupoController extends Controller
     public function index(Request $request): Response
     {
         $Grupo = $this->model;
+        $grupos = Grupo::with('materias')->paginate(10);
         $Grupo = $Grupo->when($request->search, function ($query, $search) {
             if ($search != '') {
-                $query->where('name',          'LIKE', "%$search%");
+                $query->where('name', 'LIKE', "%$search%");
                 $query->orWhere('status', 'LIKE', "%$search%");
             }
-        })->paginate(10)->withQueryString();
-
+        })->with('materias')->paginate(10)->withQueryString();
+    //dd($grupos);
         return Inertia::render("Grupo/Index", [
-            'titulo'      => 'Grupos de ITI  ',
-            'Grupo'    => $Grupo,
-            'routeName'      => $this->routeName,
+            'titulo' => 'Grupos de ITI',
+            'Grupo' => $Grupo,
+            'grupos' => $grupos,
+            'routeName' => $this->routeName,
             'loadingResults' => false
         ]);
     }
@@ -69,12 +73,24 @@ class GrupoController extends Controller
      */
     public function store(StoreGrupoRequest $request)
     {
-        Grupo::create([
+      
+        $grupo = Grupo::create([
             'grado' => $request->input('grado'),
             'grupo' => $request->input('grupo'),
             'tutor' => $request->input('tutor'),
-            'materia' => $request->input('materia'),
+        ]);
+        $cuatrimestre = $request->input('grado');
+        $materias = Materia::where('cuatrimestre', $cuatrimestre)->get();
+    
+        // Vincular todas las materias al grupo
+        foreach ($materias as $materia) {
+            Grupo_Materias::create([
+                'materia_id' => $materia->id,
+                'grupo_id' => $grupo->id,
             ]);
+        }
+      
+
         return redirect()->route("grupo.index")->with('message', 'grupo generado con éxito');
  
     }
@@ -99,9 +115,11 @@ class GrupoController extends Controller
     public function edit( $id)
     {
         $Grupo= Grupo::find($id);
+        
         return Inertia::render("Grupo/Edit", [
             'titulo'      => 'Modificar materia',
             'Grupo'    => $Grupo,
+            
             'routeName'      => $this->routeName,
         ]);
     }

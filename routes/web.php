@@ -13,6 +13,8 @@ use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\PreguntaController;
 use App\Http\Controllers\RespuestaController;
+use App\Http\Controllers\GrupoMateriasController;
+use App\Http\Controllers\RecursamientoController;
 use App\Models\Announcements;
 use App\Models\review;
 use App\Models\User;
@@ -99,7 +101,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('pregunta', PreguntaController::class)->parameters(['pregunta' => 'pregunta']);
     //Route::get('/academico/{user}/edit', [AcademicoController::class, 'edit'])->name('academico.edit');
     Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
-
+    Route::resource('grupomaterias', GrupoMateriasController::class)->parameters(['grupomaterias' => 'grupomaterias']);
+    Route::resource('recursamiento', RecursamientoController::class)->parameters(['recursamiento' => 'recursamiento']);
     
     
 });

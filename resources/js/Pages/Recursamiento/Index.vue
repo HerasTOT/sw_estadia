@@ -24,8 +24,10 @@ import NotificationBar from "@/components/NotificationBar.vue";
 export default {
     props: {
         titulo: { type: String, required: true },
-        Grupo: { type: Object, required: true },
-        grupos: { type: Object, required: true },
+        Recursamiento: {
+            type: Object,
+            required: true
+        },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -44,10 +46,11 @@ export default {
     },
     setup() {
         const form = useForm({
-            grado: '',
-            grupo: '',
-            tutor: '',
-            materia:''
+            materia: '',
+            periodo: '',
+            profesor: '',
+            horarios:'',
+           
         });
         const eliminar = (id) => {
             Swal.fire({
@@ -60,7 +63,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("grupo.destroy", id));
+                    form.delete(route("recursamiento.destroy", id));
                 }
             });
         };
@@ -98,42 +101,64 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox v-if="grupos.data.length < 1">
+        <CardBox v-if="Recursamiento.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
-      
-        <CardBox v-else class="mb-6" has-table>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        <div v-for="item in grupos.data" :key="item.id"
-             class="max-w-full bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                    {{ item.grado }}
-                    {{ item.grupo }}
-                </h3>
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Tutor: {{ item.tutor }}
-                </p>
-                
-                <!-- Mostrar las materias relacionadas -->
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Materias:
-                    <span v-for="materia in item.materias" :key="materia.pivot_materia_id">
-                        <br> {{ materia.nombre }}
-                    </span>
-                </p>
-            </div>
-            <div class="flex justify-end items-end p-4">
-                <BaseButtons>
-                    <BaseButton color="warning" :icon="mdiApplicationEdit" small
-                                :href="route(`${routeName}edit`, item.id)" />
-                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
-                </BaseButtons>
-            </div>
-        </div>
-    </div>
-</CardBox>
 
+        <CardBox v-else class="mb-6" has-table>
+            <table>
+                <thead>
+                    <tr>
+                        <th />
+                        <th>Materia</th>
+                        <th>Periodo</th>
+                        <th>Profesor</th>
+                        <th>Horarios</th>
+                        
+                        <th></th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="recursa in Recursamiento.data" :key="recursa.id">
+                        <td class="align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-book-half" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+                            </svg>
+                        </td>
+                        <td data-label="Nombre">
+                            {{ recursa.materia }}
+                        </td>
+                        <td data-label="clave">
+                            {{ recursa.periodo }}
+                        </td>
+                        <td data-label="cuatrimestre">
+                            {{ recursa.profesor }}
+                        </td>
+                        <td data-label="tipo">
+                            {{ recursa.horarios }}
+                        </td>
+                       
+
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="warning" :icon="mdiApplicationEdit" small
+                                    :href="route(`${routeName}edit`, recursa.id)" />
+                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(recursa.id)" />
+                            </BaseButtons>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <Pagination :currentPage="Recursamiento.current_page" :links="Recursamiento.links"
+                :total="Recursamiento.links.length - 2"></Pagination>
+        </CardBox>
 
     </LayoutMain>
 </template>

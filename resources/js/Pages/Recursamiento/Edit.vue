@@ -11,11 +11,11 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'Grupo', 'routeName']);
-const form = useForm({ ...props.Grupo });
+const props = defineProps(['titulo', 'Recursamiento', 'routeName']);
+const form = useForm({ ...props.Recursamiento });
 
 const guardar = () => {
-    form.put(route("grupo.update", props.Grupo.id));
+    form.put(route("recursamiento.update", props.Recursamiento.id));
 };
 
 </script>
@@ -32,13 +32,14 @@ const guardar = () => {
 
         <CardBox form @submit.prevent="guardar">
             <FormField label="Nombre">
-                <FormControl v-model="form.grado"  placeholder="grado"/>
-                <FormControl v-model="form.grupo" placeholder="grupo" />
-                <FormControl v-model="form.tutor" placeholder="tutor" />
-
+                <FormControl v-model="form.materia"  placeholder="materia"/>
+                <FormControl v-model="form.periodo" placeholder="periodo" />
+                <FormControl v-model="form.profesor" placeholder="profesor" />
+                <FormControl v-model="form.horarios" placeholder="horarios" />
                 
+              
             </FormField>
-          
+
           
             <template #footer>
                 <BaseButtons>

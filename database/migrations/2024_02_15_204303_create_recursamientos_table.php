@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('grupos', function (Blueprint $table) {
+        Schema::create('recursamientos', function (Blueprint $table) {
             $table->id();
-            $table->integer('grado');
-            $table->string('grupo');
-            $table->string('tutor');
+            $table->String("materia");
+            $table->String("periodo");
+            $table->String("profesor");
+            $table->String("horarios");
             $table->timestamps();
         });
-
-       
     }
 
     /**
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grupos');
+        Schema::dropIfExists('recursamientos');
     }
 };

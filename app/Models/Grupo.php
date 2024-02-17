@@ -12,10 +12,24 @@ class Grupo extends Model
         'grado',
         'grupo',
         'tutor',
-        'materia',
+        
         ];
     public function alumnos()
     {
-        return $this->belongsToMany(Alumno::class);
+        return $this->hasMany(Alumno::class);
+    }
+    public function grupoMateria()
+    {
+        return $this->belongsToMany(Materia::class, 'grupo_materias', 'grupo_id', 'materia_id');
+    }
+    public function materias()
+    {
+        return $this->belongsToMany(Materia::class, 'grupo__materias', 'grupo_id', 'materia_id')
+            ->withTimestamps();
+    }
+    public function gruposRelacionados()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo__materias', 'materia_id', 'grupo_id')
+            ->withTimestamps();
     }
 }

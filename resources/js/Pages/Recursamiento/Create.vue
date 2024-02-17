@@ -25,24 +25,17 @@ export default {
         CardBox,
         SectionTitleLineWithButton
     },
-  
-   
     setup() {
         const handleSubmit = () => {
-            form.post(route('grupo.store'));
+            form.post(route('recursamiento.store'));
         };
 
         const form = useForm({
-            grado: '',
-            grupo: '',
-            tutor: '',
-            
+            materia: '',
+            periodo: '',
+            profesor: '',
+            horarios:'',
         });
-        const cuatri = {
-            '1': '1',
-            '2': '2',
-            // ... otras opciones según sea necesario
-        };
 
         return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
     }
@@ -63,9 +56,11 @@ export default {
 
         <CardBox form @submit.prevent="handleSubmit">
             <FormField label="Nombre">
-                <FormControl v-model="form.grado" id="grado"  :options="cuatri" placeholder="grado"/>
-                <FormControl v-model="form.grupo"  placeholder="grupo" />
-                <FormControl v-model="form.tutor" placeholder="tutor" />        
+                <FormControl v-model="form.materia"  placeholder="materia"/>
+                <FormControl v-model="form.periodo" placeholder="periodo" />
+                <FormControl v-model="form.profesor" placeholder="profesor" />
+                <FormControl v-model="form.horarios" placeholder="horarios" />
+               
             </FormField>
            
             <template #footer>

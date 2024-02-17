@@ -25,12 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('pregunta_respuesta', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('respuesta_id')->constrained('respuestas');
-            $table->foreignId('pregunta_id')->constrained('preguntas');
-            $table->timestamps();
-        });
+        
     }
 
     /**

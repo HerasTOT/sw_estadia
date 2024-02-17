@@ -87,7 +87,7 @@ class MateriaSeeder extends Seeder
         Materia::create(['nombre'=>'Sistemas Inteligentes','clave'=>'0000','cuatrimestre'=>'8','tipo'=>'Teorico','No_horas_presenciales'=>'6','No_horas_no_presenciales'=>'3','periodo'=>'Ene-Abr','nivel'=>'facil','status'=>'1']);
         Materia::create(['nombre'=>'Gestión de Desarrollo de Software','clave'=>'0000','cuatrimestre'=>'8','tipo'=>'Teorico','No_horas_presenciales'=>'6','No_horas_no_presenciales'=>'3','periodo'=>'Ene-Abr','nivel'=>'facil','status'=>'1']);
 
-        //cuatrimestre 1
+        //cuatrimestre 9
         Materia::create(['nombre'=>'Inglés IX','clave'=>'0000','cuatrimestre'=>'9','tipo'=>'Teorico','No_horas_presenciales'=>'6','No_horas_no_presenciales'=>'3','periodo'=>'May-Ago','nivel'=>'facil','status'=>'1']);
         Materia::create(['nombre'=>'Inteligencia de Negocios','clave'=>'0000','cuatrimestre'=>'9','tipo'=>'Teorico','No_horas_presenciales'=>'6','No_horas_no_presenciales'=>'3','periodo'=>'May-Ago','nivel'=>'facil','status'=>'1']);
         Materia::create(['nombre'=>'Desarrollo de Negocios para Tecnologías de la Información','clave'=>'0000','cuatrimestre'=>'9','tipo'=>'Teorico','No_horas_presenciales'=>'6','No_horas_no_presenciales'=>'3','periodo'=>'May-Ago','nivel'=>'facil','status'=>'1']);

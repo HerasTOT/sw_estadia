@@ -18,6 +18,10 @@ class Materia extends Model
         'periodo',
         'nivel',
          'status'];
-
+         public function grupos()
+         {
+             return $this->hasMany(Grupo_Materias::class, 'materia_id');
+         }
+         
 
 }

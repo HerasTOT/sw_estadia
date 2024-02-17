@@ -203,6 +203,8 @@ export default {
 
                 
         </CardBox>
+
+        
         <CardBox v-if="usuarios.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
@@ -275,63 +277,7 @@ export default {
 
                 
         </CardBox>
-        <CardBox v-if="usuarios.data.length < 1">
-            <CardBoxComponentEmpty />
-        </CardBox>
 
-        <CardBox v-else class="mb-6" has-table>
-            <table>
-                <thead>
-                    <tr>
-                        <th colspan="10">Administradores</th>
-                    </tr>
-                    <tr>
-                        
-                        <th>Nombre</th>
-                        <th>Apellido Paterno</th>
-                        <th>Apellido Materno</th>
-                        <th>Telefono</th>
-                        <th>Correo</th>
-                      
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in usuarios.data" :key="item.id" v-if="usuarios.role === 'Admin'">
-                        
-                        
-                        <td data-label="nombre">
-                            {{ item.name }}
-                        </td>
-                        <td data-label="Apellido Paterno">
-                            {{ item.apellido_paterno }}
-                        </td>
-                        <td data-label="Apellido Materno">
-                            {{ item.apellido_materno }}
-                        </td>
-                        <td data-label="telefono">
-                            {{ item.numero }}
-                        </td>
-                        <td data-label="telefono">
-                            {{ item.email }}
-                        </td>
-                        
-                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiApplicationEdit" small
-                                    :href="route(`${routeName}edit`, item.id)" />
-                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
-                            </BaseButtons>
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
-
-
-
-            <Pagination :currentPage="usuarios.current_page" :links="usuarios.links" :total="usuarios.links.length - 2">
-            </Pagination>
-        </CardBox>
+        
     </LayoutMain>
 </template>
