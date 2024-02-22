@@ -27,9 +27,8 @@ class AcademicoController extends Controller
         $this->model = new Academico();
         $this->routeName = 'academico.';
 
-       
- 
    }
+   
    public function index(Request $request): Response
    {
         $user = Auth::user();
@@ -38,7 +37,6 @@ class AcademicoController extends Controller
         $preguntas = Pregunta::all();
 
      
-
        return Inertia::render("Academico/Index", [
            'titulo'      => 'Formato de analisis academico',
            'Academico'    => $Academico,
@@ -80,9 +78,10 @@ class AcademicoController extends Controller
             'materia_recursar' => $request->input('materia_recursar'),
             'status' => $request->input('status'),
             'version' => $request->input('version'),
+            'formato' => $request->input('formato'),
             ]);
 
-            $respuestas = $request->input('respuestas'); // Cambiado de 'respuesta' a 'respuestas'
+            $respuestas = $request->input('respuestas'); 
             $preguntas_id = $request->input('pregunta_id');
             
             if (!is_null($respuestas) && is_array($respuestas)) {

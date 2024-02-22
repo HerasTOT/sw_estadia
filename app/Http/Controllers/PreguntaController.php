@@ -70,7 +70,7 @@ class PreguntaController extends Controller
     {
         Pregunta::create([
             'pregunta' => $request->input('pregunta'),
-            
+            'formato' => $request->input('formato'),
         ]);
         return redirect()->route("pregunta.index")->with('message', 'materia generado con éxito');
     }

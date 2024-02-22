@@ -32,10 +32,18 @@ export default {
 
         const form = useForm({
             pregunta: '',
-           
+            formato: '',
         });
-
-        return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
+        const formato = {
+            1: 'Formato de analisis academico',
+            2: 'Formato de habitos de estudio',
+            3: 'brrrr',
+            
+        };
+        return { 
+            handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub,formato
+        
+        }
     }
 }
 </script>
@@ -54,6 +62,12 @@ export default {
 
         <CardBox form @submit.prevent="handleSubmit">
             <FormField label="Nombre">
+                <label for="formato">Selecciona el formato:</label>
+                <select v-model="form.formato" id="formato">
+                <option disabled value="">Selecciona el formato</option>
+                <option v-for="(texto, valor) in formato" :key="valor" :value="valor">{{ texto }}</option>
+                </select>
+
                 <FormControl v-model="form.pregunta"  placeholder="Ingresa la pregunta"/>
             </FormField>
            

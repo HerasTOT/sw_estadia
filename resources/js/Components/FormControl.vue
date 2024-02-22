@@ -48,6 +48,14 @@ const props = defineProps({
     type: [String, Number, Boolean, Array, Object],
     default: "",
   },
+  valueSelect: {
+    type: String,
+    default: "id",
+  },
+  showOption: {
+    type: String,
+    default: "name",
+  },
   required: Boolean,
   borderless: Boolean,
   transparent: Boolean,
@@ -70,7 +78,8 @@ const inputElClass = computed(() => {
     "dark:placeholder-gray-400",
     computedType.value === "textarea" ? "h-24" : "h-12",
     props.borderless ? "border-0" : "border",
-    props.transparent ? "bg-transparent" : "bg-white dark:bg-slate-800",
+    props.disabled ? "bg-gray-300 dark:bg-slate-600" : "bg-white dark:bg-slate-800",
+    props.transparent === "bg-transparent",
   ];
 
   if (props.icon) {
@@ -140,13 +149,13 @@ if (props.ctrlKFocus) {
       :class="inputElClass"
       :disabled="disabled"
     >
-      <option value="" selected disabled>Seleccione una opcion</option>
+      <option value="" selected disabled>Seleccione una opción</option>
       <option
         v-for="option in options"
         :key="option.id ?? option"
-        :value="option.id ?? option"
+        :value="option[valueSelect] ?? option"
       >
-        {{ option.name ?? option }}
+        {{ option[showOption] ?? option }}
       </option>
     </select>
     <textarea

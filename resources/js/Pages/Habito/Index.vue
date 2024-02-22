@@ -24,9 +24,9 @@ import NotificationBar from "@/components/NotificationBar.vue";
 export default {
     props: {
         titulo: { type: String, required: true },
-        Grupo: { type: Object, required: true },
-        grupos: { type: Object, required: true },
-        alumnos: { type: Object, required: true },
+        pregunta:{ type: Object, required: true },
+        habito: { type: Object, required: true },
+        
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -45,10 +45,13 @@ export default {
     },
     setup() {
         const form = useForm({
+            matricula: '',
             grado: '',
             grupo: '',
-            tutor: '',
-            materia:''
+            tutor:'',
+            periodo:'',
+            formato:'',
+            pregunta:'',
         });
         const eliminar = (id) => {
             Swal.fire({
@@ -61,7 +64,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("grupo.destroy", id));
+                    form.delete(route("habito.destroy", id));
                 }
             });
         };
@@ -99,54 +102,39 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox v-if="grupos.data.length < 1">
-            <CardBoxComponentEmpty />
-        </CardBox>
-      
-        <CardBox v-else class="mb-6" has-table>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-2">
-        <div v-for="item in grupos.data" :key="item.id"
-             class="max-w-full bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-4">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                    {{ item.grado }}
-                    {{ item.grupo }}
-                </h3>
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Tutor: {{ item.tutor }}
-                </p>
-                
-                <!-- Mostrar las materias relacionadas -->
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Materias:
-                    <span v-for="materia in item.materias" :key="materia.pivot_materia_id">
-                        <br> {{ materia.nombre }}
-                    </span>
-                </p>
-                <br> 
+        <CardBox v-if="habito">
+            <div>
+                <div>
+                    <strong>Matrícula:</strong> {{ habito.matricula }}
+                </div>
+                <div>
+                    <strong>Grado:</strong> {{ habito.grado }}
+                </div>
+                <div>
+                    <strong>Grupo:</strong> {{ habito.grupo }}
+                </div>
+                <div>
+                    <strong>Tutor:</strong> {{ habito.tutor }}
+                </div>
+                <div>
+                    <strong>Tutor:</strong> {{ habito.periodo }}
+                </div>
                 
             </div>
-            <div class="flex justify-end items-end p-4">
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                    <BaseButtons type="justify-start lg:justify-end" no-wrap>
 
-                        <a :href="route('grupos.assign-group.view', item.id)"> <button
-                                class="bg-transparent dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-yellow-700 text-yellow-700 font-semibold hover:text-black py-2 px-4 border border-yellow-500  dark:hover:border-transparent hover:border-transparent rounded">
-                                Asignar Estudiante
-                            </button>
-                        </a>
-                    </BaseButtons>
-                </p>
-                <BaseButtons>
-                    <BaseButton color="warning" :icon="mdiApplicationEdit" small
-                                :href="route(`${routeName}edit`, item.id)" />
-                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
-                </BaseButtons>
+        </CardBox>
+        <div class="bg-slate-50 w-1/2 p-14">
+            <div class="flex flex-col">
+                <div class="px-5 py-3 w-3/4">
+                    <h2 class="text-2xl font-bold mb-4">Preguntas</h2>
+                    <ul class="list-disc pl-5 text-lg">
+                        <!-- Aplicar un filtro para mostrar solo las preguntas con formato igual a 2 -->
+                        <li v-for="unaPregunta in pregunta.filter(item => item.formato === 2)" :key="unaPregunta.id" class="mb-2">
+                            {{ unaPregunta.pregunta }}
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</CardBox>
-
-{{ alumnos }}
     </LayoutMain>
 </template>

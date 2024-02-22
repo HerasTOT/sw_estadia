@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicoController;
+use App\Http\Controllers\HabitoController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PermissionController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\RecursamientoController;
 use App\Models\Announcements;
 use App\Models\review;
 use App\Models\User;
+use App\Models\Recursamiento;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,8 +38,10 @@ use function GuzzleHttp\Promise\all;
 */
 
 Route::get('/', function () {
+    $recursamientos = Recursamiento::all();
+    
     return Inertia::render('Welcome', [
-  
+  'recursamientos' =>$recursamientos,
     ]);
 });
 
@@ -96,15 +100,22 @@ Route::middleware('auth')->group(function () {
     Route::resource('alumno', AlumnoController::class)->parameters(['alumno' => 'alumno']);
     //Route::post('/alumnos}', [AlumnoController::class, 'store'])->name('alumnos.store');
     Route::resource('profesor', ProfesorController::class)->parameters(['profesor' => 'profesor']);
+  
+    //Formatos  Analiis academico individual, habitos 
     Route::resource('academico', AcademicoController::class)->names('academico');
-
+    Route::resource('habito', HabitoController::class)->names('habito');
     Route::resource('pregunta', PreguntaController::class)->parameters(['pregunta' => 'pregunta']);
-    //Route::get('/academico/{user}/edit', [AcademicoController::class, 'edit'])->name('academico.edit');
     Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
+
+    //Gestion de grupo 
     Route::resource('grupomaterias', GrupoMateriasController::class)->parameters(['grupomaterias' => 'grupomaterias']);
+    //Publicacion de recursamientos disponibles 
     Route::resource('recursamiento', RecursamientoController::class)->parameters(['recursamiento' => 'recursamiento']);
+    //asignar estudiantes a grupo
+    Route::get('/grupos/{id}/assign-group', [GrupoController::class, 'assignGroupView'])->name('grupos.assign-group.view');
     
-    
+    Route::post('/gruposAsignacion', [GrupoController::class, 'assignAlumno'])->name('grupos.assign-group.post');
+        //Route::post('/asigngrupo/{id}', [GrupoController::class, 'assignAlumno'])->name('assigngroup.post');
 });
 
 

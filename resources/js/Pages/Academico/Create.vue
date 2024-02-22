@@ -38,6 +38,7 @@ export default {
             tutor:'',
             periodo:'',
             materia_recursar:'',
+            formato:'1',
             status:0,
             version:1,
             respuestas:[], // Inicializa con un arreglo del tamaño de props.preguntas lleno de undefined
@@ -81,7 +82,7 @@ export default {
                    
                     
                     <FormField label="Análisis académico individual">
-                        <div v-for="pregunta in preguntas" :key="pregunta.id">
+                        <div v-for="pregunta in preguntas.filter(item => item.formato === 1)" :key="pregunta.id">
                             <p>{{ pregunta.pregunta }}</p>
                             <input  v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)">
                         </div>

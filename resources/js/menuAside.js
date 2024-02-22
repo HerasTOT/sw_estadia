@@ -122,30 +122,7 @@ export default [
     icon: mdiViewListOutline,
     role: "Admin",
     menu: [
- /*       {
-        permission: 'institutions.index',
-        label: "Instituciones",
-        href: "/institutions",
-        to: "/institutions",
-      },
-      {
-        label: "Documentos",
-        href: "/documents",
-        to: "/documents",
-        permission: 'document.index',
-      },
-      {
-        label: "Criterios",
-        href: "/assesstment",
-        to: "/assesstment",
-        permission: 'assesstments.index',
-      },
-        label: "Grupo",
-        href: "/knowledges",
-        to: "/knowledges",
-        permission: "thematics.index",
-      },*/
-      
+ 
       {
         label: "Materias",
         href: "/materia",
@@ -155,24 +132,6 @@ export default [
     ],
   },
 
-  // {
-  //   href: "/announcements",
-  //   icon: mdiMonitor,
-  //   label: "Convocatorias",
-  //   role: "Postulante"
-  // },
-  // {
-  //   href: "/proposals",
-  //   label: "Tus propuestas",
-  //   icon: mdiBookshelf,
-  //   role: "Postulante"
-  // },
-  // {
-  //   href: "/proposals",
-  //   label: "Propuestas",
-  //   icon: mdiBookshelf,
-  //   role: "Evaluador"
-  // },
 
   {
     href:"/grupo",
@@ -180,12 +139,7 @@ export default [
     icon: mdiBookshelf,
     role: "Admin",
   }, 
-  {
-    href:"/academico",
-    label: "Academico",
-    icon: mdiBookshelf,
-    role: "Alumno",
-  }, 
+  
   {
     href:"/academico",
     label: "Academico",
@@ -205,6 +159,25 @@ export default [
     icon: mdiBookshelf,
     role: "Admin",
   }, 
+  {
+    label: "Formatos",
+    icon: mdiSecurity,
+    role: "Admin",
+    menu: [
+      {
+        href:"/academico",
+        label: "Academico",
+        icon: mdiBookshelf,
+        role: "Admin",
+      }, 
+      {
+        href:"/habito",
+        label: "Habitos",
+        icon: mdiBookshelf,
+        role: "Admin",
+      }, 
+    ]
+  }
 
 
 ];

@@ -18,6 +18,7 @@ class Academico extends Model
         'materia_recursar',
         'status',
         'version',
+        'formato',
        ];
 
        

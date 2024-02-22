@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grupo;
+use App\Models\Alumno;
 use App\Models\Materia;
 use App\Models\Grupo_Materias;
 use App\Http\Requests\StoreGrupoRequest;
 use App\Http\Requests\UpdateGrupoRequest;
+use App\Models\Grupo_Alumnos;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -35,6 +37,7 @@ class GrupoController extends Controller
     public function index(Request $request): Response
     {
         $Grupo = $this->model;
+        $alumnos = Alumno::all();
         $grupos = Grupo::with('materias')->paginate(10);
         $Grupo = $Grupo->when($request->search, function ($query, $search) {
             if ($search != '') {
@@ -46,12 +49,41 @@ class GrupoController extends Controller
         return Inertia::render("Grupo/Index", [
             'titulo' => 'Grupos de ITI',
             'Grupo' => $Grupo,
+            'alumnos' => $alumnos,
             'grupos' => $grupos,
             'routeName' => $this->routeName,
             'loadingResults' => false
         ]);
     }
+    
+  
 
+    public function assignGroupView($id)
+    {
+        $alumnos = Alumno::all(); // Obtener todos los alumnos
+        $grupo = Grupo::find($id);
+        return inertia('Grupo/assignGroup', [
+            'titulo' => 'Asignar Alumno a Grupo',
+            'alumnos' => $alumnos,
+            'grupo' => $grupo,
+        ]);
+    }
+
+    public function assignAlumno(Request $request)
+    {
+        
+        $alumnoId = $request['alumno_id'];
+        $grupoId = $request['grupo_id'];
+        Grupo_Alumnos::create([
+            'alumno_id' => $alumnoId,
+            'grupo_id' => $grupoId,
+        ]);
+        // $alumno = Alumno::find($alumnoId);
+        // $alumno->grupos()->sync([$grupoId]);
+    
+        return redirect()->route("{$this->routeName}index")->with('success', 'Alumno asignado al grupo con éxito!');
+    }
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -60,7 +92,7 @@ class GrupoController extends Controller
     public function create()
     {
         return Inertia::render("Grupo/Create", [
-            'titulo'      => 'Materia',
+            'titulo'      => 'Grupo',
             'routeName'      => $this->routeName,
         ]);
     }
@@ -115,11 +147,11 @@ class GrupoController extends Controller
     public function edit( $id)
     {
         $Grupo= Grupo::find($id);
-        
+        $alumnos = Alumno::all();
         return Inertia::render("Grupo/Edit", [
             'titulo'      => 'Modificar materia',
             'Grupo'    => $Grupo,
-            
+            'alumnos'  => $alumnos,
             'routeName'      => $this->routeName,
         ]);
     }

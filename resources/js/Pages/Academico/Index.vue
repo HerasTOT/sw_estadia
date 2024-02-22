@@ -57,6 +57,8 @@ export default {
             tutor:'',
             periodo:'',
             materia_recursar:'',
+            pregunta:'',
+            formato:'',
           
         });
 
@@ -133,20 +135,30 @@ export default {
 
         </CardBox>
 
+        <CardBox v-if="preguntas">
+            <div>
+                <div>
+                    <strong>Pregunta:</strong> {{ preguntas.pregunta }}
+                </div>
+               
+            </div>
+
+        </CardBox>
+
+        
         <div class="bg-slate-50 w-1/2 p-14">
             <div class="flex flex-col">
                 <div class="px-5 py-3 w-3/4">
                     <h2 class="text-2xl font-bold mb-4">Preguntas</h2>
                     <ul class="list-disc pl-5 text-lg">
-                        <li v-for="unaPregunta in preguntas" :key="unaPregunta.id" class="mb-2">
+                        <!-- Aplicar un filtro para mostrar solo las preguntas con formato igual a 2 -->
+                        <li v-for="unaPregunta in preguntas.filter(item => item.formato === 1)" :key="unaPregunta.id" class="mb-2">
                             {{ unaPregunta.pregunta }}
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        
-        
         
         
       

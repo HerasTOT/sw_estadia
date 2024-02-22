@@ -38,11 +38,7 @@ export default {
             tutor: '',
             
         });
-        const cuatri = {
-            '1': '1',
-            '2': '2',
-            // ... otras opciones según sea necesario
-        };
+
 
         return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
     }
@@ -63,8 +59,13 @@ export default {
 
         <CardBox form @submit.prevent="handleSubmit">
             <FormField label="Nombre">
-                <FormControl v-model="form.grado" id="grado"  :options="cuatri" placeholder="grado"/>
-                <FormControl v-model="form.grupo"  placeholder="grupo" />
+                
+                <select v-model="form.grado">
+                    <option disabled value="">Selecciona el grado</option>
+                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                    <option>7</option> <option>8</option><option>9</option><option>10</option>
+                </select>
+                    <FormControl v-model="form.grupo"  placeholder="grupo" />
                 <FormControl v-model="form.tutor" placeholder="tutor" />        
             </FormField>
            

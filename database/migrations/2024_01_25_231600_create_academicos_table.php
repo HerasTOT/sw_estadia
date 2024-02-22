@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('materia_recursar');
             $table->integer('status');
             $table->integer('version');
+            $table->integer('formato');
             $table->timestamps();
         });
     }

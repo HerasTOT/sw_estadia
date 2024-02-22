@@ -11,11 +11,11 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'Grupo', 'routeName']);
-const form = useForm({ ...props.Grupo });
+const props = defineProps(['titulo', 'habito', 'routeName']);
+const form = useForm({ ...props.habito });
 
-const guardar = () => {
-    form.put(route("grupo.update", props.Grupo.id));
+const handleSubmit = () => {
+    form.put(route("academico.update", props.habito.id));
 };
 
 </script>
@@ -30,24 +30,31 @@ const guardar = () => {
             </Link>
         </SectionTitleLineWithButton>
 
-        <CardBox form @submit.prevent="guardar">
-            <FormField label="Nombre">
-                <FormControl v-model="form.grado"  placeholder="grado"/>
+        <CardBox form @submit.prevent="handleSubmit">
+            <FormField label="Matricula">
+                <FormControl v-model="form.matricula"  placeholder="Matricula"/>
+             </FormField>
+             <FormField label="Grado">
+                <FormControl v-model="form.grado" placeholder="grado" />
+             </FormField>
+             <FormField label="Grupo">
                 <FormControl v-model="form.grupo" placeholder="grupo" />
+             </FormField>
+             <FormField label="Tutor">
                 <FormControl v-model="form.tutor" placeholder="tutor" />
-                
-            </FormField>
-          
-          
+             </FormField>
+             <FormField label="Periodo">
+                <FormControl v-model="form.periodo" placeholder="periodo" />
+             </FormField>
+            
+        
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />
-                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline label="Cancelar" />
+                    <BaseButton @click="handleSubmit" type="submit" color="info" label="Actualizar" />
+                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
+                        label="Cancelar" />
                 </BaseButtons>
             </template>
         </CardBox>
-
-        {{ alumnos }}
     </LayoutMain>
 </template>
-

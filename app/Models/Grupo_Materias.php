@@ -11,15 +11,15 @@ class Grupo_Materias extends Model
     protected $fillable = [
         'materia_id',
         'grupo_id',
-        ];
+    ];
 
 
-        public function grupo()
-        {
-            return $this->belongsTo(Grupo::class, 'grupo_id');
-        }
-        public function materia()
-        {
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class, 'grupo_id');
+    }
+    public function materia()
+    {
         return $this->belongsTo(Materia::class, 'materia_id');
-        }
+    }
 }

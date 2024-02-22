@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('respuestas', function (Blueprint $table) {
             $table->id();
-            $table->string('respuesta');
+            $table->string('respuesta')->nullable();
             $table->unsignedBigInteger("user_id")->nullable();
             $table->unsignedBigInteger("pregunta_id")->nullable();
 
@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->timestamps();
         });
-
+// 
         
     }
 

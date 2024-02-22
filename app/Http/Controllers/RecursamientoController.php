@@ -47,12 +47,22 @@ class RecursamientoController extends Controller
 
 
     }
+    public function recursamientoDashboard()
+    {
+    $recursamientos = Recursamiento::all(); // O cualquier consulta que necesites
+    return $recursamientos;
+    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function welcome()
+    {
+    $recursamientos = $this->recursamientoDashboard();
+
+    return Inertia::render('Welcome', [
+        'recursamientos' => $recursamientos,
+    ]);
+    }
+
+
     public function create()
     {
         return Inertia::render("Recursamiento/Create", [
