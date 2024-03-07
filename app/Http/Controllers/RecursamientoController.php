@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Recursamiento;
 use App\Http\Requests\StoreRecursamientoRequest;
 use App\Http\Requests\UpdateRecursamientoRequest;
+use App\Models\ListaRecursamiento;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class RecursamientoController extends Controller
 {
@@ -47,6 +49,9 @@ class RecursamientoController extends Controller
 
 
     }
+
+   
+     /*
     public function recursamientoDashboard()
     {
     $recursamientos = Recursamiento::all(); // O cualquier consulta que necesites
@@ -61,8 +66,7 @@ class RecursamientoController extends Controller
         'recursamientos' => $recursamientos,
     ]);
     }
-
-
+    */
     public function create()
     {
         return Inertia::render("Recursamiento/Create", [

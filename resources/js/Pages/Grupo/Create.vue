@@ -4,6 +4,8 @@ import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -13,12 +15,15 @@ import CardBox from "@/components/CardBox.vue";
 export default {
     props: {
         titulo: { type: String, required: true },
+        profesor: { type: Object, required: true },
+        usuarios: { type: Object, required: true },
         routeName: { type: String, required: true },
     },
     components: {
         LayoutMain,
         FormField,
         FormControl,
+        FormControlV2,
         BaseDivider,
         BaseButton,
         BaseButtons,
@@ -35,11 +40,11 @@ export default {
         const form = useForm({
             grado: '',
             grupo: '',
-            tutor: '',
+            profesor_id: '',
             
         });
 
-
+     
         return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
     }
 }
@@ -58,17 +63,31 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
-            <FormField label="Nombre">
+            <FormField>
+           
+            <FormField :error="form.errors.grado" >
                 
-                <select v-model="form.grado">
+                <select v-model="form.grado" class="w-full">
                     <option disabled value="">Selecciona el grado</option>
                     <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
                     <option>7</option> <option>8</option><option>9</option><option>10</option>
                 </select>
-                    <FormControl v-model="form.grupo"  placeholder="grupo" />
-                <FormControl v-model="form.tutor" placeholder="tutor" />        
             </FormField>
+            <FormField :error="form.errors.grupo">
+        
+                <select v-model="form.grupo"  class="w-full">
+                    <option disabled value="">Selecciona el grupo</option>
+                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
+                  
+                </select>
+            </FormField>
+            <FormField :error="form.errors.profesor_id">
+                    <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
+                </FormField>
+            </FormField>
+            
            
+
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />
@@ -77,5 +96,6 @@ export default {
                 </BaseButtons>
             </template>
         </CardBox>
+        
     </LayoutMain>
 </template>

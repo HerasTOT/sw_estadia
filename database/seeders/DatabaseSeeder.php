@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        DB::table('users')->insert(['name' => 'Santiago', 'apellido_paterno' => 'Heras', 'apellido_materno' => 'Gomez','numero' => '7775420768', 'email' => 'admin@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'admin']);
-        DB::table('users')->insert(['name' => 'Miguel', 'apellido_paterno' => 'roman', 'apellido_materno' => 'Chano','numero' => '7772052238', 'email' => 'miguel@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'alumno']);
+        DB::table('users')->insert(['name' => 'Santiago', 'apellido_paterno' => 'Heras', 'apellido_materno' => 'Gomez','numero' => '7775420768', 'email' => 'admin@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'Admin']);
+        DB::table('users')->insert(['name' => 'Miguel', 'apellido_paterno' => 'roman', 'apellido_materno' => 'Chano','numero' => '7772052238', 'email' => 'miguel@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'Alumno']);
 
         /*
         DB::table('users')->insert(['curp' => 'NUOR001129HGRXRBA4', 'name' => 'JOSE ROBERTO', 'paternal_surname' => 'NUÑEZ', 'maternal_surname' => 'ORTIZ', 'email' => 'josuezerod@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
@@ -35,17 +35,14 @@ class DatabaseSeeder extends Seeder
         */
         $this->call([
             RoleSeeder::class,
-            WorkplaceSeeder::class,
-            StateSeeder::class,
-            TownshipSeeder::class,
-            ColonySeeder::class,
+           
+            
             PermissionSeeder::class,
             AdminSeeder::class,
-            ProposalStatesSeeder::class,
-            AreasKnowledgeSeeder::class,
-            EventsSeeder::class,
+            
             InstitutionsSeeder::class,
-            MateriaSeeder::class
+            MateriaSeeder::class,
+            PreguntaSeeder::class,
 
         ]);
 

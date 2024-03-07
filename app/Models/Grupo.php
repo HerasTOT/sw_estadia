@@ -11,12 +11,12 @@ class Grupo extends Model
     protected $fillable = [
         'grado',
         'grupo',
-        'tutor',
+        'profesor_id',
 
     ];
     public function alumnos()
     {
-        return $this->belongsToMany(Alumno::class);
+        return $this->belongsToMany(Alumno::class, 'grupo_alumnos', 'grupo_id', 'alumno_id');
     }
     public function grupoMateria()
     {
@@ -31,5 +31,9 @@ class Grupo extends Model
     {
         return $this->belongsToMany(Grupo::class, 'grupo__materias', 'materia_id', 'grupo_id')
             ->withTimestamps();
+    }
+    public function profesor()
+    {
+        return $this->belongsTo(Profesor::class);
     }
 }

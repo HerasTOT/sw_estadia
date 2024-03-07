@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, defineProps,watch, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
@@ -11,12 +11,41 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'habito', 'routeName']);
-const form = useForm({ ...props.habito });
+const props = defineProps(['titulo', 'habito','preguntas','respuestas', 'routeName']);
+
+const form = useForm({ 
+...props.habito,
+respuestas:{}
+
+});
 
 const handleSubmit = () => {
-    form.put(route("academico.update", props.habito.id));
+    form.put(route("habito.update", props.habito.id));
 };
+watch(
+    () => form,
+    (newValue) => {
+        console.log('form:', newValue);
+    },
+    { deep: true }
+);
+
+watch(
+    () => props.respuestas,
+    (newValue) => {
+        console.log('respuestas:', newValue);
+    },
+    { deep: true }
+);
+onMounted(() => {
+    updateFormWithWatchData();
+});
+function updateFormWithWatchData() {
+    form.respuestas = {};
+    props.respuestas.forEach(respuesta => {
+        form.respuestas[respuesta.pregunta.id] = respuesta;
+    });
+}
 
 </script>
 
@@ -37,7 +66,7 @@ const handleSubmit = () => {
              <FormField label="Grado">
                 <FormControl v-model="form.grado" placeholder="grado" />
              </FormField>
-             <FormField label="Grupo">
+             <FormField label="Grupssss">
                 <FormControl v-model="form.grupo" placeholder="grupo" />
              </FormField>
              <FormField label="Tutor">
@@ -46,7 +75,18 @@ const handleSubmit = () => {
              <FormField label="Periodo">
                 <FormControl v-model="form.periodo" placeholder="periodo" />
              </FormField>
-            
+             <FormField label="Habito">
+                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                    <p style="font-size: 20px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p>
+                    <ul>
+                        <li v-for="respuestaForm in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuestaForm.id">
+                            
+                            <FormControl v-model="respuestaForm.respuesta" />
+                        </li>
+                    </ul>
+                    <br>
+                </div>
+            </FormField>
         
             <template #footer>
                 <BaseButtons>

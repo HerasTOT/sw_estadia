@@ -35,7 +35,7 @@ class PreguntaController extends Controller
                 $query->where('name',          'LIKE', "%$search%");
                 $query->orWhere('status', 'LIKE', "%$search%");
             }
-        })->paginate(10)->withQueryString();
+        })->paginate(30)->withQueryString();
 
         return Inertia::render("Pregunta/Index", [
             'titulo'      => 'Formulario',

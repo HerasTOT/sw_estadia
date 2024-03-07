@@ -43,9 +43,11 @@ class UsuarioController extends Controller
 
         $alumnos = Alumno::with('user')->get();
         $profesores = Profesor::with('user')->get();
+        $admin = User::where('role', 'Admin')->get();
+
         $usuarios = $this->model::with('roles')
             ->orderBy('id')
-            ->paginate(10)
+            ->paginate(30)
             ->withQueryString();
 
            
@@ -54,6 +56,7 @@ class UsuarioController extends Controller
             'titulo'   => ' Usuarios',
             'usuarios' => $usuarios,
             'alumnos' => $alumnos,
+            'admin' => $admin,
             'profesores' => $profesores,
             'profiles' => Role::get(['id', 'name']),
             'routeName'=> $this->routeName,
@@ -73,7 +76,7 @@ class UsuarioController extends Controller
     public function store(StoreUsuarioRequest $request)
     
     {
-        // dd($request);
+        
         $newUser = user::create([
             'name' => $request->input('name'),
             'apellido_paterno' => $request->input('apellido_paterno'),
@@ -98,20 +101,12 @@ class UsuarioController extends Controller
    
     public function edit($id)
     {
+        
         $usuario = User::find($id);
-    
-        // Obtén el alumno específico relacionado con este usuario
-        $alumno = Alumno::where('user_id', $id)->first();
-    
-        // Asegúrate de manejar el caso en que no se encuentre el usuario o el alumno
-        if (!$usuario || !$alumno) {
-            abort(404, 'Usuario o alumno no encontrado');
-        }
-    
+       
         return Inertia::render("Seguridad/Usuarios/Edit", [
             'titulo'   => 'Modificar Usuario',
             'usuario'  => $usuario,
-            'alumno'   => $alumno,
             'routeName'=> $this->routeName,
         ]);
     }
@@ -145,18 +140,13 @@ class UsuarioController extends Controller
 
     
 
-    public function destroy($alumnoId)
+    public function destroy($id)
     {
-        $alumno = Alumno::find($alumnoId);
-        $usuario = User::find($alumno->user_id);
-        $alumno->delete();
+        
+        $usuario = User::find($id);
+        $usuario->delete();
 
-        if ($usuario) {
-            // Elimina al usuario
-            $usuario->delete();
-        }
-
-        // Finalmente, elimina al alumno
+       
         
     return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito');
 

@@ -66,30 +66,38 @@ export default {
 
         <CardBox form @submit.prevent="handleSubmit">
             
-                <FormField >
+                <FormField :error="form.errors.name">
                     <FormControl v-model="form.name"  placeholder="Nombre" />
                 </FormField>
-                <FormField >
+                <FormField :error="form.errors.apellido_paterno">
                     <FormControl v-model="form.apellido_paterno" placeholder="Apellido paterno" />
                 </FormField>
-                <FormField >
+                <FormField :error="form.errors.apellido_materno">
                     <FormControl v-model="form.apellido_materno" placeholder="Apellido materno" />
                 </FormField>
-                <FormField >
+                <FormField :error="form.errors.numero">
                     <FormControl v-model="form.numero" placeholder="Teléfono" />
                 </FormField>
-                <FormField >
+                <FormField :error="form.errors.email">
                     <FormControl v-model="form.email" placeholder="email" />
                 </FormField>
-                <FormField >
+                <FormField :error="form.errors.password">
                     <FormControl v-model="form.password" placeholder="password" />
                 </FormField>
                 
-                <FormField >
-                    <FormControl v-model="form.cuatrimestre"  placeholder="cuatrimestre"/>
-                    <FormControl v-model="form.matricula" placeholder="matricula" />
-                    
+                <FormField :error="form.errors.cuatrimestre">
+                    <select v-model="form.cuatrimestre">
+                        <option disabled value="">Selecciona el cuatrimestre</option>
+                        <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                        <option>7</option> <option>8</option><option>9</option><option>10</option>
+                    </select>
+                    <FormField :error="form.errors.matricula">
+                  
+                        <FormControl v-model="form.matricula" placeholder="matricula" />
+                        
+                    </FormField>
                 </FormField>
+                
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />

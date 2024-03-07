@@ -65,34 +65,44 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
-            <FormField >
+            <FormField :error="form.errors.name">
                 <FormControl v-model="form.name"  placeholder="Nombre" />
             </FormField>
-            <FormField >
+            <FormField :error="form.errors.apellido_paterno">
                 <FormControl v-model="form.apellido_paterno" placeholder="Apellido paterno" />
             </FormField>
-            <FormField >
+            <FormField :error="form.errors.apellido_materno">
                 <FormControl v-model="form.apellido_materno" placeholder="Apellido materno" />
             </FormField>
-            <FormField >
+            <FormField :error="form.errors.numero">
                 <FormControl v-model="form.numero" placeholder="Teléfono" />
             </FormField>
-            <FormField >
+            <FormField :error="form.errors.email">
                 <FormControl v-model="form.email" placeholder="email" />
             </FormField>
-            <FormField >
+            <FormField :error="form.errors.password">
                 <FormControl v-model="form.password" placeholder="password" />
             </FormField>
-            <FormField >
-                <FormControl v-model="form.grado_academico"  placeholder="Grado academico"/>
-                <FormControl v-model="form.area" placeholder="area" />
-                
+            <FormField :error="form.errors.grado_academico">
+                <select v-model="form.grado_academico">
+                    <option disabled value="">Selecciona tu grado academico</option>
+                    <option>Educación superior</option> <option>Maestria</option><option>Doctorado</option> 
+                </select>
+                      
             </FormField>
-           
+            <FormField :error="form.errors.area">
+                <select v-model="form.area">
+                    <option disabled value="">Selecciona tu area </option>
+                    <option>Programación y Desarrollo de Software</option> <option>Redes de Computadoras</option><option>Sistemas Operativos</option> 
+                    <option>Bases de Datos</option> <option>Ciberseguridad</option><option>Desarrollo Web</option> 
+                    <option>Inteligencia Artificial y Aprendizaje Automático</option> <option>Gestión de Proyectos de TI</option><option>Tecnologías Emergentes</option> 
+
+                </select>    
+            </FormField>    
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />
-                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
+                    <BaseButton :href="route(`usuarios.index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>
             </template>

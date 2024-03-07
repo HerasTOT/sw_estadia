@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id();
             $table->integer('grado');
             $table->string('grupo');
-            $table->string('tutor');
+            
+            $table->unsignedBigInteger("profesor_id")->nullable();
+            $table->foreign("profesor_id")->references("id")->on("profesors")->onDelete("cascade");
             $table->timestamps();
         });
 

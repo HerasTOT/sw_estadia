@@ -109,8 +109,8 @@ export default {
                     <tr>
                         <th />
                         
-                        <th>Cuatrimestre</th>
-                        <th>matricula</th>
+                        <th>Grado Academico</th>
+                        <th>Area</th>
                         <th></th>
                         <th></th>
                         <th />
@@ -154,6 +154,6 @@ export default {
             <Pagination :currentPage="Profesor.current_page" :links="Profesor.links"
                 :total="Profesor.links.length - 2"></Pagination>
         </CardBox>
-        {{ usuarios }}
+      
     </LayoutMain>
 </template>

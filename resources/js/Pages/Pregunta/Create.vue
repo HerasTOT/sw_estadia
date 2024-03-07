@@ -37,7 +37,7 @@ export default {
         const formato = {
             1: 'Formato de analisis academico',
             2: 'Formato de habitos de estudio',
-            3: 'brrrr',
+            3: 'Formato de Inteligencias multiples',
             
         };
         return { 

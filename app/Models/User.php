@@ -110,4 +110,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Habito::class);
     }
+    public function inteligencia()
+    {
+        return $this->hasOne(Inteligencia::class);
+    }
 }

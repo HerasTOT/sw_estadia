@@ -63,17 +63,45 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
+
+
             <FormField label="Información personal">
                 <FormControl v-model="form.matricula" placeholder="Matrícula"/>
-                <FormControl v-model="form.grado" placeholder="Grado" />
-                <FormControl v-model="form.grupo" placeholder="Grupo" />
-                <FormControl v-model="form.tutor" placeholder="Tutor" />
-                <FormControl v-model="form.periodo" placeholder="Periodo" />
+    
             </FormField>
-            <FormField label="Análisis académico individual">
+            <FormField>
+                    <select v-model="form.grado" class="w-full">
+                        <option disabled value="">Selecciona el grado </option>
+                        <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                        <option>7</option> <option>8</option><option>9</option><option>10</option>
+                    </select>
+             </FormField>
+
+            <FormField>
+                    <select v-model="form.grupo" class="w-full">
+                        <option disabled value="">Selecciona el grupo</option>
+                        <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
+                    </select>
+            </FormField>
+            
+            
+            <FormField>
+                <FormControl v-model="form.tutor" placeholder="Tutor" class="w-full"/>
+            </FormField>
+            
+            <FormField>
+                <select v-model="form.periodo" class="w-full">
+                    <option disabled value="">Selecciona el periodo cuatrimestral</option>
+                    <option>Sep-Dic</option> <option>Ene-Abr</option><option>May-Ago</option> 
+                </select>
+            </FormField>
+            
+          
+            <FormField label="Habitos de estudio">
                 <div v-for="pregunta in preguntas.filter(item => item.formato === 2)" :key="pregunta.id">
-                    <p>{{ pregunta.pregunta }}</p>
-                    <input  v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)">
+                    <p style="font-size: 18px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p> 
+                    <FormControl  v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)"/>
+                    <br>
                 </div>
             </FormField>
             <template #footer>

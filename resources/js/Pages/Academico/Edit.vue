@@ -1,5 +1,6 @@
+
 <script setup>
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, defineProps,watch, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
@@ -10,16 +11,49 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
+import { mdiBallotOutline} from "@mdi/js";
+const props = defineProps(['titulo', 'Academico','respuestas', 'preguntas','routeName']);
 
-const props = defineProps(['titulo', 'Academico', 'routeName']);
-const form = useForm({ ...props.Academico });
+
+const form = useForm({ 
+...props.Academico,
+respuestas:{}
+
+});
+
+
 
 const handleSubmit = () => {
-    form.put(route("academico.update", props.Academico.id));
+    updateFormWithWatchData();
+    console.log('Datos del formulario:', form);
+    form.put(route("academico.update",{ academico: form, respuestas: Object.values(form.respuestas) }));
 };
 
-</script>
+watch(
+    () => form,
+    (newValue) => {
+        console.log('form:', newValue);
+    },
+    { deep: true }
+);
 
+watch(
+    () => props.respuestas,
+    (newValue) => {
+        console.log('respuestas:', newValue);
+    },
+    { deep: true }
+);
+onMounted(() => {
+    updateFormWithWatchData();
+});
+function updateFormWithWatchData() {
+    form.respuestas = {};
+    props.respuestas.forEach(respuesta => {
+        form.respuestas[respuesta.pregunta.id] = respuesta;
+    });
+}
+</script>
 <template>
     <LayoutMain :title="titulo">
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
@@ -49,7 +83,19 @@ const handleSubmit = () => {
              <FormField label="Materia a recursar">
                 <FormControl v-model="form.materia_recursar" placeholder="materia a recursar" />
              </FormField>
-        
+             <FormField label="Análisis académico individual">
+                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                    <p style="font-size: 20px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p>
+                    <ul>
+                        <li v-for="respuestaForm in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuestaForm.id">
+                            
+                            <FormControl v-model="respuestaForm.respuesta" />
+                        </li>
+                    </ul>
+                    <br>
+                </div>
+            </FormField>
+          
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="info" label="Actualizar" />
@@ -58,6 +104,6 @@ const handleSubmit = () => {
                 </BaseButtons>
             </template>
         </CardBox>
+        
     </LayoutMain>
 </template>
-

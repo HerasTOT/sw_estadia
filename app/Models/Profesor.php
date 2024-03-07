@@ -21,5 +21,9 @@ class Profesor extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function grupo()
+    {
+        return $this->hasOne(Grupo::class);
+    }
     
 }

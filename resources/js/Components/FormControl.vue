@@ -56,6 +56,14 @@ const props = defineProps({
     type: String,
     default: "name",
   },
+  options2: {
+      type: Array,
+      default: () => [],
+    },
+    showFilteredOptions: {
+      type: Boolean,
+      default: false,
+    },
   required: Boolean,
   borderless: Boolean,
   transparent: Boolean,
@@ -137,6 +145,13 @@ if (props.ctrlKFocus) {
     mainStore.isFieldFocusRegistered = false;
   });
 }
+const computedOptions = computed(() => {
+  if (props.showFilteredOptions) {
+    return (props.options2 || []).filter(option => option.rol === 'Tutor');
+  } else {
+    return props.options || [];
+  }
+});
 </script>
 
 <template>
@@ -151,7 +166,7 @@ if (props.ctrlKFocus) {
     >
       <option value="" selected disabled>Seleccione una opción</option>
       <option
-        v-for="option in options"
+        v-for="option in computedOptions"
         :key="option.id ?? option"
         :value="option[valueSelect] ?? option"
       >

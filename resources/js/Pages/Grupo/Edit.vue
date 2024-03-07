@@ -10,8 +10,13 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
+import FormControlV2 from "@/components/FormControlV2.vue";
 
-const props = defineProps(['titulo', 'Grupo', 'routeName']);
+const props = defineProps([
+    'titulo',
+    'Grupo',
+    'usuarios',
+    'routeName']);
 const form = useForm({ ...props.Grupo });
 
 const guardar = () => {
@@ -32,9 +37,18 @@ const guardar = () => {
 
         <CardBox form @submit.prevent="guardar">
             <FormField label="Nombre">
-                <FormControl v-model="form.grado"  placeholder="grado"/>
-                <FormControl v-model="form.grupo" placeholder="grupo" />
-                <FormControl v-model="form.tutor" placeholder="tutor" />
+                <select v-model="form.grado">
+                    <option disabled value="">Selecciona el grado</option>
+                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                    <option>7</option> <option>8</option><option>9</option><option>10</option>
+                </select>
+                <select v-model="form.grupo">
+                    <option disabled value="">Selecciona el grupo</option>
+                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
+                  
+                </select>
+                
+                <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios" />
                 
             </FormField>
           
@@ -47,7 +61,7 @@ const guardar = () => {
             </template>
         </CardBox>
 
-        {{ alumnos }}
+        
     </LayoutMain>
 </template>
 

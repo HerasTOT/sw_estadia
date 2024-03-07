@@ -1,5 +1,6 @@
 <script>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm} from '@inertiajs/vue3';
+import axios from 'axios';
 import Swal from "sweetalert2";
 import Pagination from '@/Shared/Pagination.vue';
 import LayoutMain from '@/layouts/LayoutMain.vue';
@@ -27,6 +28,7 @@ export default {
         Grupo: { type: Object, required: true },
         grupos: { type: Object, required: true },
         alumnos: { type: Object, required: true },
+        profesor: { type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -53,21 +55,55 @@ export default {
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
-                text: "Esta acción no se puede revertir",
+                text: "Se borraran todos los alumnos y el profesor relacionados a este grupo",
                 icon: "warning",
                 showCancelButton: true,
                 cancelButtonColor: "#d33",
                 confirmButtonColor: "#3085d6",
-                confirmButtonText: "Si!, eliminar registro!",
+                confirmButtonText: "Si!, eliminar Grupo!",
+                cancelButtonText: "Cancelar ",
             }).then((res) => {
                 if (res.isConfirmed) {
                     form.delete(route("grupo.destroy", id));
                 }
             });
         };
+        const eliminarAlumno = (grupoId, alumnoId, index) => {
+            Swal.fire({
+                title: "¿Está seguro?",
+                text: "Esta acción no se puede revertir",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonColor: "#d33",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar estudiante del grupo",
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    // Utiliza Axios para realizar la solicitud HTTP y automáticamente incluir el token CSRF
+                    axios.post(route("grupo.remove-alumno"), {
+                        alumno_id: alumnoId,
+                        grupo_id: grupoId,
+                    })
+                    .then((response) => {
+                        // Eliminar el alumno de la lista
+                        props.alumnos.splice(index, 1);
+                        Swal.fire({
+                            title: "Éxito",
+                            text: "Estudiante eliminado del grupo con éxito",
+                            icon: "success",
+                        });
+                    })
+                    .catch((error) => {
+                        
+                       
+                    });
+                }
+            });
+        };
+
 
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, eliminar,eliminarAlumno, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -104,7 +140,7 @@ export default {
         </CardBox>
       
         <CardBox v-else class="mb-6" has-table>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-2">
         <div v-for="item in grupos.data" :key="item.id"
              class="max-w-full bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
             <div class="p-4">
@@ -113,10 +149,20 @@ export default {
                     {{ item.grupo }}
                 </h3>
                 <p class="text-sm text-gray-500 dark:text-gray-300">
-                    Tutor: {{ item.tutor }}
+                    Tutor: {{  item.profesor.user.name }} {{  item.profesor.user.apellido_paterno }} {{  item.profesor.user.apellido_materno }}
                 </p>
                 
                 <!-- Mostrar las materias relacionadas -->
+                <p class="text-sm text-gray-500 dark:text-gray-300">
+                    Estudiantes:
+                    <span v-for="alumno in item.alumnos" :key="alumno.id">
+                        <br> {{ alumno.user.name }} {{ alumno.user.apellido_paterno }} {{ alumno.user.apellido_materno }} {{ alumno.matricula }}
+                        <span class="ml-3">
+                            <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminarAlumno(item.id, alumno.id)" />
+                        </span>
+                    </span >
+                    
+                </p>
                 <p class="text-sm text-gray-500 dark:text-gray-300">
                     Materias:
                     <span v-for="materia in item.materias" :key="materia.pivot_materia_id">
@@ -130,8 +176,8 @@ export default {
                 <p class="text-sm text-gray-500 dark:text-gray-300">
                     <BaseButtons type="justify-start lg:justify-end" no-wrap>
 
-                        <a :href="route('grupos.assign-group.view', item.id)"> <button
-                                class="bg-transparent dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-yellow-700 text-yellow-700 font-semibold hover:text-black py-2 px-4 border border-yellow-500  dark:hover:border-transparent hover:border-transparent rounded">
+                        <a :href="route('grupos.assign-group.view', item.id)" class='ml-2'> <button
+                                class="bg-transparent ml-2 dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-yellow-700 text-yellow-700 font-semibold hover:text-black py-2 px-4 border border-yellow-500  dark:hover:border-transparent hover:border-transparent rounded">
                                 Asignar Estudiante
                             </button>
                         </a>
@@ -139,7 +185,7 @@ export default {
                 </p>
                 <BaseButtons>
                     <BaseButton color="warning" :icon="mdiApplicationEdit" small
-                                :href="route(`${routeName}edit`, item.id)" />
+                                :href="route(`${routeName}edit`, item.id)" class='ml-2'/>
                     <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                 </BaseButtons>
             </div>
@@ -147,6 +193,5 @@ export default {
     </div>
 </CardBox>
 
-{{ alumnos }}
     </LayoutMain>
 </template>

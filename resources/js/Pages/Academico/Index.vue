@@ -28,6 +28,10 @@ export default {
             type: Object,
             required: true
         },
+        respuestas: {
+            type: Object,
+            required: true
+        },
         preguntas:{
             type: Object,
             required: true
@@ -131,36 +135,24 @@ export default {
                 <div>
                     <strong>Materia a recursar:</strong> {{ Academico.materia_recursar}}
                 </div>
-            </div>
-
-        </CardBox>
-
-        <CardBox v-if="preguntas">
-            <div>
-                <div>
-                    <strong>Pregunta:</strong> {{ preguntas.pregunta }}
-                </div>
-               
-            </div>
-
-        </CardBox>
-
-        
-        <div class="bg-slate-50 w-1/2 p-14">
-            <div class="flex flex-col">
-                <div class="px-5 py-3 w-3/4">
-                    <h2 class="text-2xl font-bold mb-4">Preguntas</h2>
-                    <ul class="list-disc pl-5 text-lg">
-                        <!-- Aplicar un filtro para mostrar solo las preguntas con formato igual a 2 -->
-                        <li v-for="unaPregunta in preguntas.filter(item => item.formato === 1)" :key="unaPregunta.id" class="mb-2">
-                            {{ unaPregunta.pregunta }}
+                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                    <strong>{{ pregunta.pregunta }}</strong>
+                    <ul>
+                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuesta.id">
+                            {{ respuesta.respuesta }}
                         </li>
                     </ul>
+                    
                 </div>
             </div>
-        </div>
+
+        </CardBox>
+
+    
+
         
         
+   
       
         
     </LayoutMain>

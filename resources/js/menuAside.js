@@ -14,7 +14,10 @@ import {
   mdiBookshelf,
   mdiCalendarAccountOutline,
   mdiClockTimeEleven,
-  mdiAccount
+  mdiAccount,
+  mdiBedClock,
+  mdiEmoticonHappyOutline ,
+  mdiFileDocumentEditOutline 
 
 } from "@mdi/js";
 
@@ -30,95 +33,8 @@ export default [
   },
 
   
-  /*  {
-     href: "/tables",
-     to: "/tables",
-     label: "Tables",
-     icon: mdiTable,
-   },
-     {
-    to: "/",
-    href: "/",
-    label: "Styles",
-    icon: mdiPalette,
-  },
-
-   {
-     href: "/ui",
-     to: "/ui",
-     label: "UI",
-     icon: mdiTelevisionGuide,
-   },
-   {
-     href: "/responsive",
-     to: "/responsive",
-     label: "Responsive",
-     icon: mdiResponsive,
-   },
- 
-   {
-     href: "/profile",
-     to: "/profile",
-     label: "Profile",
-     icon: mdiAccountCircle,
-   },
-   {
-     to: "/login",
-     label: "Login",
-     icon: mdiLock,
-   },
-   {
-     href: "/error",
-     to: "/error",
-     label: "Error",
-     icon: mdiAlertCircle,
-   }, */
-  /*  {
-    href: "/announcements",
-    label: "Convocatorias",
-    icon: mdiClockCheck,
-    role: "Admin"
-  },
   {
-    label: "Asignar Revisores",
-    href: "/proposals",
-    icon: mdiSquareEditOutline,
-    role: "Admin"
-  },
-  {
-    label: "Eventos",
-    href: "/events",
-    to: "/events",
-    icon: mdiClockTimeEleven,
-    role: "Admin"
-  },*/
-  {
-    label: "Seguridad",
-    icon: mdiSecurity,
-    role: "Admin",
-    menu: [
-      {
-        label: "Permisos",
-        href: "/permissions",
-        to: "/permissions",
-        permission: 'permissions.index',
-      },
-      {
-        label: "Roles",
-        href: "/roles",
-        to: "/roles",
-        role: "Admin",
-      },
-      {
-        href: "/profile",
-        to: "/profile",
-        label: "Usuarios",
-        role: "Admin"
-      },
-    ]
-  },
-  {
-    label: "Catalogos",
+    label: "Catalogo",
     icon: mdiViewListOutline,
     role: "Admin",
     menu: [
@@ -128,6 +44,13 @@ export default [
         href: "/materia",
         to: "/materia",
         permission: 'materia.index',
+        icon: mdiBookshelf,
+      },
+      {
+        label: "Periodo",
+        href: "/periodo",
+        icon: mdiBookshelf,
+       
       },
     ],
   },
@@ -140,12 +63,6 @@ export default [
     role: "Admin",
   }, 
   
-  {
-    href:"/academico",
-    label: "Academico",
-    icon: mdiBookshelf,
-    role: "Admin",
-  }, 
   {
     href:"/usuarios",
     label: "Usuario",
@@ -160,8 +77,39 @@ export default [
     role: "Admin",
   }, 
   {
+    href:"/lista",
+    label: "Recursamientos disponibles",
+    icon: mdiBookshelf,
+    role: "Alumno",
+  }, 
+  {
     label: "Formatos",
-    icon: mdiSecurity,
+    icon: mdiFileDocumentEditOutline ,
+    role: "Alumno",
+    menu: [
+      {
+        href:"/academico",
+        label: "Academico",
+        icon: mdiBookshelf,
+        role: "Alumno",
+      }, 
+      {
+        href:"/habito",
+        label: "Habitos",
+        icon: mdiBedClock,
+        role: "Alumno",
+      }, 
+      {
+        href:"/inteligencia",
+        label: "Inteligencia",
+        icon: mdiEmoticonHappyOutline ,
+        role: "Alumno",
+      }, 
+    ]
+  },
+  {
+    label: "Formatos",
+    icon: mdiFileDocumentEditOutline ,
     role: "Admin",
     menu: [
       {
@@ -173,7 +121,19 @@ export default [
       {
         href:"/habito",
         label: "Habitos",
+        icon: mdiBedClock,
+        role: "Admin",
+      }, 
+      {
+        href:"/encuesta",
+        label: "Encuesta recursamientos",
         icon: mdiBookshelf,
+        role: "Admin",
+      }, 
+      {
+        href:"/inteligencia",
+        label: "Inteligencia",
+        icon: mdiEmoticonHappyOutline ,
         role: "Admin",
       }, 
     ]

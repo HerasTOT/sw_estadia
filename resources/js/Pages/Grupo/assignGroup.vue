@@ -46,8 +46,7 @@ const guardar = () => {
 
 <template>
   <LayoutMain :title="titulo">
-    {{ form }}
-
+    
     <CardBox form @submit.prevent="guardar">
       <FormField label="Alumnos">
         <FormControl :icon="mdiAccountSchool" v-model="form.alumno_id" :showOption="'matricula'" :options="alumnos" />

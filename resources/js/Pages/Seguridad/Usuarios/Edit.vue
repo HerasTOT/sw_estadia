@@ -11,11 +11,11 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'usuario', 'alumno', 'routeName']);
-const form = useForm({ ...props.usuario, ...props.alumno });
+const props = defineProps(['titulo', 'usuario', 'routeName']);
+const form = useForm({ ...props.usuario });
 
 const guardar = () => {
-    form.put(route("usuarios.update", props.usuario.id, props.alumno.id));
+    form.put(route("usuarios.update", props.usuario.id));
 };
 
 </script>
@@ -23,12 +23,6 @@ const guardar = () => {
 <template>
     <LayoutMain :title="titulo">
 
-             <!--
-         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
-         <Link :href="route(`${routeName}index`)">
-          </Link>
-            </SectionTitleLineWithButton>
-            -->
 
 
         <CardBox form @submit.prevent="guardar">
@@ -38,12 +32,8 @@ const guardar = () => {
                 <FormControl v-model="form.apellido_materno" placeholder="apellido_materno" />
                 <FormControl v-model="form.numero" placeholder="numero" />
                 <FormControl v-model="form.email" placeholder="email" />
-                <FormControl v-model="form.password" placeholder="password" />
+
                 <FormControl v-model="form.role" placeholder="role" />
-            </FormField>
-            <FormField label="Datos del Alumno" v-if="alumno">
-                <FormControl v-model="form.cuatrimestre" placeholder="cuatrimestre" />
-                <FormControl v-model="form.matricula" placeholder="matricula" />
             </FormField>
 
 

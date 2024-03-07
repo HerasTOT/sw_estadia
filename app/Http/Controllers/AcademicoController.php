@@ -32,10 +32,15 @@ class AcademicoController extends Controller
    public function index(Request $request): Response
    {
         $user = Auth::user();
+        
         $academicoId = $user->academico ? $user->academico->id : null;
         $Academico = $user->Academico;
-        $preguntas = Pregunta::all();
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+            $query->where('formato', 1);
+        })->get();
+        $preguntas = $respuestas->pluck('pregunta')->unique();
 
+        
      
        return Inertia::render("Academico/Index", [
            'titulo'      => 'Formato de analisis academico',
@@ -43,6 +48,7 @@ class AcademicoController extends Controller
            'academicoId' => $academicoId,
            'routeName'      => $this->routeName,
            'preguntas'      => $preguntas,  
+           'respuestas'     => $respuestas,
            'loadingResults' => false
        ]);
    }
@@ -85,12 +91,12 @@ class AcademicoController extends Controller
             $preguntas_id = $request->input('pregunta_id');
             
             if (!is_null($respuestas) && is_array($respuestas)) {
-                foreach ($respuestas as $pregunta_id => $respuesta) { // Recorre el array asociativo con índice de pregunta
+                foreach ($respuestas as $pregunta_id => $respuesta) { 
                     if($pregunta_id != null){
                     Respuesta::create([
                         'respuesta' => $respuesta,
                         'user_id' => $user->id,
-                        'pregunta_id' => $pregunta_id, // Usa directamente el ID de la pregunta
+                        'pregunta_id' => $pregunta_id, 
                     ]);
                 }
                 }
@@ -108,21 +114,52 @@ class AcademicoController extends Controller
 
     public function edit($id)
     {
+        $user = Auth::user();
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+            $query->where('formato', 1);
+        })->get();
+        $preguntas = $respuestas->pluck('pregunta')->unique();
+
         $Academico= Academico::find($id);
         return Inertia::render("Academico/Edit", [
             'titulo'      => 'Modificar formulario',
             'Academico'    => $Academico,
+            'respuestas'     => $respuestas,
+            'preguntas'      => $preguntas,  
+
             'routeName'      => $this->routeName,
         ]);
     }
 
     public function update(UpdateAcademicoRequest $request,$id)
     {
+        $user = Auth::user();
+
         $Academico = Academico::find($id);
         $Academico->update($request->all());
-        return redirect()->route("academico.index")->with('message', 'Materia actualizado correctamente!');
 
-    }
+        
+        
+        $respuestasUsuario = Respuesta::where('user_id', $user->id)->get();
+        foreach ($request->input('respuestas') as $respuestaData) {
+            // Accede a los datos de respuesta y pregunta
+            $preguntaId = $respuestaData['pregunta']['id'];
+            $respuestaValor = $respuestaData['respuesta'];
+    
+            // Busca la respuesta existente para esa pregunta y ese usuario
+            $respuestaExistente = $respuestasUsuario->firstWhere('pregunta_id', $preguntaId);
+    
+            if ($respuestaExistente) {
+                // Si la respuesta existe, actualiza el valor
+                $respuestaExistente->respuesta = $respuestaValor;
+                $respuestaExistente->save();
+            } 
+        
+        } 
+        return redirect()->route("academico.index")->with('message', 'Formulario actualizado correctamente!');
+
+    
+}
 
     public function destroy($id)
     {

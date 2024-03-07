@@ -31,16 +31,21 @@ class HabitoController extends Controller
    public function index(Request $request): Response
    {
     $user = Auth::user();
-    $habito = $user->habito ? $user->habito->id : null;
+    $habitoId = $user->habito ? $user->habito->id : null;
     $habito = $user->habito;
-    $pregunta = Pregunta::all();
+    $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+        $query->where('formato', 2);
+    })->get();
+    $preguntas = $respuestas->pluck('pregunta')->unique();
 
      
        return Inertia::render("Habito/Index", [
            'titulo'      => 'Formato de habitos de estudio',
            'routeName'      => $this->routeName,
-           'habito'      => $habito,  
-           'pregunta' => $pregunta,
+           'habito'      => $habito,
+           'habitoId'      => $habitoId,    
+           'preguntas' => $preguntas,
+           'respuestas' => $respuestas,
            'loadingResults' => false
        ]);
    }
@@ -90,29 +95,28 @@ class HabitoController extends Controller
             return redirect()->route("habito.index")->with('message', 'grupo generado con éxito');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Habito  $habito
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function show(Habito $habito)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Habito  $habito
-     * @return \Illuminate\Http\Response
-     */
+  
     public function edit($id)
     {
+        $user = Auth::user();
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+            $query->where('formato', 2);
+        })->get();
+        $preguntas = $respuestas->pluck('pregunta')->unique();
+
         $habito= Habito::find($id);
         return Inertia::render("Habito/Edit", [
-            'titulo'      => 'Modificar materia',
-            'habito'    => $habito,
+            'titulo'      => 'Modificar formato',
+            'habito'       => $habito,
+            'respuestas'     => $respuestas,
+            'preguntas'      => $preguntas,  
+
             'routeName'      => $this->routeName,
         ]);
     }
@@ -121,21 +125,33 @@ class HabitoController extends Controller
     {
         $habito = Habito::find($id);
         $habito->update($request->all());
-        return redirect()->route("grupo.index")->with('message', 'Grupo actualizado correctamente!');
+        $user = Auth::user();
+        $respuestasUsuario = Respuesta::where('user_id', $user->id)->get();
+        foreach ($request->input('respuestas') as $respuestaData) {
+            // Accede a los datos de respuesta y pregunta
+            $preguntaId = $respuestaData['pregunta']['id'];
+            $respuestaValor = $respuestaData['respuesta'];
+    
+            // Busca la respuesta existente para esa pregunta y ese usuario
+            $respuestaExistente = $respuestasUsuario->firstWhere('pregunta_id', $preguntaId);
+    
+            if ($respuestaExistente) {
+                // Si la respuesta existe, actualiza el valor
+                $respuestaExistente->respuesta = $respuestaValor;
+                $respuestaExistente->save();
+            } 
+        
+        } 
+        return redirect()->route("habito.index")->with('message', 'Formato actualizado correctamente!');
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Habito  $habito
-     * @return \Illuminate\Http\Response
-     */
+   
     public function destroy( $id)
     {
         $habito = Habito::find($id);
         $habito->delete();
-        return redirect()->route("grupo.index")->with('success', 'Materia eliminada con éxito');
+        return redirect()->route("habito.index")->with('success', 'Formato eliminada con éxito');
 
     }
 }

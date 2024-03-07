@@ -8,7 +8,7 @@ import {
     mdiTableBorder,
     mdiTableOff,
     mdiGithub,
-    mdiApplicationEdit,mdiTagEdit, mdiDeleteOutline,  mdiTrashCan
+    mdiApplicationEdit, mdiTagEdit, mdiDeleteOutline, mdiTrashCan
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -24,12 +24,10 @@ import NotificationBar from "@/components/NotificationBar.vue";
 export default {
     props: {
         titulo: { type: String, required: true },
-        usuarios: {
-            type: Object,
-            required: true
-        },
-        alumnos:{type: Object, required:true},
-        profesores:{type: Object, required:true},
+        usuarios: { type: Object, required: true },
+        admin: { type: Object, required: true },
+        alumnos: { type: Object, required: true },
+        profesores: { type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -46,20 +44,20 @@ export default {
         Pagination,
         NotificationBar
     },
-    
+
     setup() {
         const form = useForm({
             name: '',
             apellido_paterno: '',
             apellido_materno: '',
-            numero:'',
-            email:'',
-            role:'',
+            numero: '',
+            email: '',
+            role: '',
             cuatrimestre: '',
             matricula: '',
-            grado_academico:'',
-            area:'',
-            
+            grado_academico: '',
+            area: '',
+
         });
         const eliminar = (id) => {
             console.log(id)
@@ -73,11 +71,11 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("usuarios.destroy", id));
+                    form.delete(route("alumno.destroy", id));
                 }
             });
         };
-        
+
         const eliminarprofesor = (id) => {
             console.log(id)
             Swal.fire({
@@ -94,17 +92,33 @@ export default {
                 }
             });
         };
+        const eliminarAdmin = (id) => {
+            console.log(id)
+            Swal.fire({
+                title: "¿Esta seguro?",
+                text: "Esta acción no se puede revertir",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonColor: "#d33",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Si!, eliminar registro!",
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    form.delete(route("usuarios.destroy", id));
+                }
+            });
+        };
 
         return {
-            form, eliminar,eliminarprofesor, mdiMonitorCellphone,
+            form, eliminar, eliminarprofesor, eliminarAdmin, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
             mdiApplicationEdit,
-             mdiTagEdit,
+            mdiTagEdit,
             mdiTrashCan,
-            mdiDeleteOutline ,
-          
+            mdiDeleteOutline,
+
         }
     }
 
@@ -114,15 +128,15 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <BaseButton :href="'usuarios/create' " color="warning" label="Agregar administrador" />
-            <BaseButton :href="'alumno/create' " color="warning" label="Agregar alumno" />
-            <BaseButton :href="'profesor/create' " color="warning" label="Agregar profesor" />
+            <BaseButton :href="'usuarios/create'" color="warning" label="Agregar administrador" />
+            <BaseButton :href="'alumno/create'" color="warning" label="Agregar alumno" />
+            <BaseButton :href="'profesor/create'" color="warning" label="Agregar profesor" />
 
 
         </SectionTitleLineWithButton>
-        
-        
-       
+
+
+
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
         </NotificationBar>
@@ -156,12 +170,12 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-               
-        
+
+
                     <!-- Sección para alumnos -->
                     <tr v-for="profesor in profesores" :key="profesor.id">
                         <td class="align-items-center">
-                            
+
                         </td>
                         <td data-label="Nombre">
                             {{ profesor.user.name }}
@@ -189,22 +203,23 @@ export default {
                         </td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="warning" :icon="mdiTagEdit " small
+                                <BaseButton color="warning" :icon="mdiTagEdit" small
                                     :href="route(`profesor.edit`, profesor.id)" />
-                                <BaseButton color="danger" :icon="mdiDeleteOutline " small @click="eliminarprofesor(profesor.id)" />
+                                <BaseButton color="danger" :icon="mdiDeleteOutline" small
+                                    @click="eliminarprofesor(profesor.id)" />
                             </BaseButtons>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        
-            <Pagination :currentPage="usuarios.current_page" :links="usuarios.links"
-                :total="usuarios.links.length - 2"></Pagination>
 
-                
+            <Pagination :currentPage="usuarios.current_page" :links="usuarios.links" :total="usuarios.links.length - 2">
+            </Pagination>
+
+
         </CardBox>
 
-        
+
         <CardBox v-if="usuarios.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
@@ -230,12 +245,12 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-               
-        
+
+
                     <!-- Sección para alumnos -->
                     <tr v-for="alumno in alumnos" :key="alumno.id">
                         <td class="align-items-center">
-                            
+
                         </td>
                         <td data-label="Nombre">
                             {{ alumno.user.name }}
@@ -263,21 +278,66 @@ export default {
                         </td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiApplicationEdit" small
+                                <BaseButton color="warning" :icon="mdiTagEdit" small
                                     :href="route(`alumno.edit`, alumno.id)" />
-                                <BaseButton color="danger" :icon="mdiDeleteOutline " small @click="eliminar(alumno.id)" />
+                                <BaseButton color="danger" :icon="mdiDeleteOutline" small @click="eliminar(alumno.id)" />
                             </BaseButtons>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        
-            <Pagination :currentPage="usuarios.current_page" :links="usuarios.links"
-                :total="usuarios.links.length - 2"></Pagination>
 
-                
+            <Pagination :currentPage="usuarios.current_page" :links="usuarios.links" :total="usuarios.links.length - 2">
+            </Pagination>
+
+
         </CardBox>
 
-        
+        <CardBox v-if="admin.length < 1">
+            <CardBoxComponentEmpty />
+        </CardBox>
+
+        <CardBox v-else class="mb-6" has-table>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="10">Administradores</th>
+                    </tr>
+                    <tr>
+                        <th />
+                        <th>Nombre</th>
+                        <th>Apellido paterno</th>
+                        <th>Apellido materno</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th></th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sección para administradores -->
+                    <tr v-for="admin in admin" :key="admin.id">
+                        <td class="align-items-center"></td>
+                        <td data-label="Nombre">{{ admin.name }}</td>
+                        <td data-label="Apellido paterno">{{ admin.apellido_paterno }}</td>
+                        <td data-label="Apellido materno">{{ admin.apellido_materno }}</td>
+                        <td data-label="Número">{{ admin.numero }}</td>
+                        <td data-label="Email">{{ admin.email }}</td>
+                        <td data-label="Rol">{{ admin.role }}</td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="warning" :icon="mdiTagEdit" small
+                                    :href="route(`usuarios.edit`, admin.id)" />
+
+                                <BaseButton color="danger" :icon="mdiDeleteOutline" small
+                                    @click="eliminarAdmin(admin.id)" />
+                            </BaseButtons>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </CardBox>
+
     </LayoutMain>
 </template>

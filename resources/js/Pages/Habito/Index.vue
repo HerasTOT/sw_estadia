@@ -24,9 +24,10 @@ import NotificationBar from "@/components/NotificationBar.vue";
 export default {
     props: {
         titulo: { type: String, required: true },
-        pregunta:{ type: Object, required: true },
+        preguntas:{ type: Object, required: true },
         habito: { type: Object, required: true },
-        
+        habitoId: { type: String, required: true },
+        respuestas:{ type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -84,14 +85,9 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                    <path
-                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                    <path
-                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                </svg>
-            </a>
+            <BaseButton :href="'habito/create' " color="warning" label="Generar formato" />
+            <BaseButton :href="`habito/${habitoId}/edit`" color="warning" label="Modificar formato" />
+
         </SectionTitleLineWithButton>
        
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
@@ -119,22 +115,18 @@ export default {
                 <div>
                     <strong>Tutor:</strong> {{ habito.periodo }}
                 </div>
-                
+                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                    <strong>{{ pregunta.pregunta }}</strong>
+                    <ul>
+                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id )" :key="respuesta.id">
+                            {{ respuesta.respuesta }}
+                        </li>
+                    </ul>
+                    
+                </div>
             </div>
 
         </CardBox>
-        <div class="bg-slate-50 w-1/2 p-14">
-            <div class="flex flex-col">
-                <div class="px-5 py-3 w-3/4">
-                    <h2 class="text-2xl font-bold mb-4">Preguntas</h2>
-                    <ul class="list-disc pl-5 text-lg">
-                        <!-- Aplicar un filtro para mostrar solo las preguntas con formato igual a 2 -->
-                        <li v-for="unaPregunta in pregunta.filter(item => item.formato === 2)" :key="unaPregunta.id" class="mb-2">
-                            {{ unaPregunta.pregunta }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        
     </LayoutMain>
 </template>

@@ -23,16 +23,26 @@ class StoreUsuarioRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'apellido_paterno' => ['required', 'string', 'max:255'],
+            'apellido_materno' => ['required', 'string', 'max:255'],
+            'telefono' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required']
         ];
     }
-    public function attributes(): array
+
+    public function messages()
     {
         return [
-            'name' => 'Nombre',
-            'email' => 'Correo electrónico',
-            'password' => 'Contraseña'
+            'name.required' => 'El campo nombre es obligatorio.',
+            'apellido_paterno.required' => 'El campo apellido paterno es obligatorio.',
+            'apellido_materno' => 'El campo apellido materno es obligatorio.',
+            'telefono' => 'El campo Teléfono es obligatorio.',
+            'email' => 'El campo Correo Electronico es obligatorio.',
+            'password' => 'El campo contraseña  es obligatorio.',
+           
         ];
     }
+
+   
 }

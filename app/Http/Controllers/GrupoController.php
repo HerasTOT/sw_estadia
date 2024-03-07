@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grupo;
+use App\Models\User;
 use App\Models\Alumno;
+use App\Models\Profesor;
 use App\Models\Materia;
 use App\Models\Grupo_Materias;
 use App\Http\Requests\StoreGrupoRequest;
@@ -38,19 +40,23 @@ class GrupoController extends Controller
     {
         $Grupo = $this->model;
         $alumnos = Alumno::all();
-        $grupos = Grupo::with('materias')->paginate(10);
+        $profesor=Profesor::all();
+        $grupos = Grupo::with('materias','profesor.user','alumnos.user')->paginate(10);
+        
         $Grupo = $Grupo->when($request->search, function ($query, $search) {
             if ($search != '') {
                 $query->where('name', 'LIKE', "%$search%");
                 $query->orWhere('status', 'LIKE', "%$search%");
             }
-        })->with('materias')->paginate(10)->withQueryString();
+        })->with('materias','profesor.user','alumnos.user')->paginate(10)->withQueryString();
     //dd($grupos);
+        
         return Inertia::render("Grupo/Index", [
             'titulo' => 'Grupos de ITI',
             'Grupo' => $Grupo,
             'alumnos' => $alumnos,
             'grupos' => $grupos,
+            'profesor'  => $profesor,
             'routeName' => $this->routeName,
             'loadingResults' => false
         ]);
@@ -60,7 +66,7 @@ class GrupoController extends Controller
 
     public function assignGroupView($id)
     {
-        $alumnos = Alumno::all(); // Obtener todos los alumnos
+        $alumnos = Alumno::whereDoesntHave('grupos')->get();
         $grupo = Grupo::find($id);
         return inertia('Grupo/assignGroup', [
             'titulo' => 'Asignar Alumno a Grupo',
@@ -74,6 +80,7 @@ class GrupoController extends Controller
         
         $alumnoId = $request['alumno_id'];
         $grupoId = $request['grupo_id'];
+
         Grupo_Alumnos::create([
             'alumno_id' => $alumnoId,
             'grupo_id' => $grupoId,
@@ -83,6 +90,24 @@ class GrupoController extends Controller
     
         return redirect()->route("{$this->routeName}index")->with('success', 'Alumno asignado al grupo con éxito!');
     }
+
+    public function removeAlumno(Request $request)
+{
+    $alumnoId = $request['alumno_id'];
+    $grupoId = $request['grupo_id'];
+
+    // Verificar si el alumno está asignado al grupo
+    $relacion = Grupo_Alumnos::where('alumno_id', $alumnoId)->where('grupo_id', $grupoId)->first();
+
+    if (!$relacion) {
+        return redirect()->route("{$this->routeName}index")->with('error', 'Este alumno no está asignado a este grupo.');
+    }
+
+    // Eliminar la relación
+    $relacion->delete();
+
+    return redirect()->route("{$this->routeName}index")->with('success', 'Alumno eliminado del grupo con éxito!');
+}
     
     /**
      * Show the form for creating a new resource.
@@ -91,8 +116,12 @@ class GrupoController extends Controller
      */
     public function create()
     {
+        $profesor=Profesor::all();
+        $usuarios=User::all();
         return Inertia::render("Grupo/Create", [
             'titulo'      => 'Grupo',
+            'profesor'  => $profesor,
+            'usuarios'  => $usuarios,
             'routeName'      => $this->routeName,
         ]);
     }
@@ -105,11 +134,20 @@ class GrupoController extends Controller
      */
     public function store(StoreGrupoRequest $request)
     {
-      
+       
+        $profesor_id = User::find($request->input('profesor_id'))->profesor;
+        $existingAssignment = Grupo::where('profesor_id', $profesor_id->id)
+       
+        ->first();
+ 
+    if ($existingAssignment) {
+        
+        return redirect()->route("{$this->routeName}index")->with('error', 'El profesor ya esta asignado a un grupo');
+    }
         $grupo = Grupo::create([
             'grado' => $request->input('grado'),
             'grupo' => $request->input('grupo'),
-            'tutor' => $request->input('tutor'),
+            'profesor_id' => $profesor_id->id,
         ]);
         $cuatrimestre = $request->input('grado');
         $materias = Materia::where('cuatrimestre', $cuatrimestre)->get();
@@ -148,10 +186,13 @@ class GrupoController extends Controller
     {
         $Grupo= Grupo::find($id);
         $alumnos = Alumno::all();
+        $usuarios = User::all();
         return Inertia::render("Grupo/Edit", [
-            'titulo'      => 'Modificar materia',
+            'titulo'      => 'Modificar grupo',
             'Grupo'    => $Grupo,
+            'profesor_id' => $Grupo->profesor_id,
             'alumnos'  => $alumnos,
+            'usuarios'  => $usuarios,
             'routeName'      => $this->routeName,
         ]);
     }
@@ -165,8 +206,25 @@ class GrupoController extends Controller
      */
     public function update(UpdateGrupoRequest $request, $id)
     {
+       
         $Grupo = Grupo::find($id);
-        $Grupo->update($request->all());
+        $profesor = User::find($request->input('profesor_id'))->profesor;
+    
+        $Grupo->update([
+            'profesor_id' => $profesor->id,
+            'grado' => $request->input('grado'),
+            'grupo' => $request->input('grupo'),
+        ]);
+        $nuevoCuatrimestre = $request->input('grado');
+        $nuevasMaterias = Materia::where('cuatrimestre', $nuevoCuatrimestre)->get();
+        $Grupo->materias()->detach();
+        foreach ($nuevasMaterias as $materia) {
+            Grupo_Materias::create([
+                'materia_id' => $materia->id,
+                'grupo_id' => $Grupo->id,
+            ]);
+        }
+
         return redirect()->route("grupo.index")->with('message', 'Grupo actualizado correctamente!');
 
     }
@@ -180,6 +238,8 @@ class GrupoController extends Controller
     public function destroy( $id)
     {
         $Grupo = Grupo::find($id);
+        $Grupo->materias()->detach();
+        $Grupo->alumnos()->detach();
         $Grupo->delete();
         return redirect()->route("grupo.index")->with('success', 'Materia eliminada con éxito');
 
