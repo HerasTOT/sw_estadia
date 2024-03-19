@@ -9,12 +9,18 @@ import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
+
 
 export default {
     props: {
         titulo: { type: String, required: true },
+        version: { type: String, required: true },
         routeName: { type: String, required: true },
-        preguntas:{type: Object, required: true}
+        preguntas:{type: Object, required: true},
+        periodo:{type: Object, required: true},
+        usuarios:{type: Object, required: true},
     },
     components: {
         LayoutMain,
@@ -23,10 +29,12 @@ export default {
         BaseDivider,
         BaseButton,
         BaseButtons,
+        FormControlV2,
+        FormControlV3,
         CardBox,
         SectionTitleLineWithButton
     },
-    setup() {
+    setup(props) {
         const handleSubmit = () => {
             form.post(route('academico.store'));
         };
@@ -35,12 +43,12 @@ export default {
             matricula: '',
             grado: '',
             grupo: '',
-            tutor:'',
-            periodo:'',
+            profesor_id:'',
+            periodo_id:'',
             materia_recursar:'',
-            formato:'1',
+            formato: '1',
             status:0,
-            version:1,
+            version: props.version,
             respuestas:[], // Inicializa con un arreglo del tamaño de props.preguntas lleno de undefined
             pregunta_id: [],
             
@@ -57,6 +65,7 @@ export default {
 
 <template>
     <LayoutMain :title="titulo">
+     
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
             <a :href="`${route(routeName + 'index')}`">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -66,7 +75,7 @@ export default {
                 </svg>
             </a>
         </SectionTitleLineWithButton>
-    
+        
         <div>
 
                 <CardBox form @submit.prevent="handleSubmit">
@@ -89,14 +98,12 @@ export default {
                         <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
                     </select>
                     </FormField>
-                    <FormField>
-                        <FormControl v-model="form.tutor" placeholder="Tutor" class="w-full"/>
+                    
+                    <FormField >
+                        <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
                     </FormField>
-                    <FormField>
-                        <select v-model="form.periodo" class="w-full">
-                            <option disabled value="">Selecciona el periodo cuatrimestral</option>
-                            <option>Sep-Dic</option> <option>Ene-Abr</option><option>May-Ago</option> 
-                        </select>
+                    <FormField >
+                        <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
                     </FormField>
                     <FormField>
                         <FormControl v-model="form.materia_recursar" placeholder="Materia a recursar" />

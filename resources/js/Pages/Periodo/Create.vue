@@ -55,11 +55,17 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
-            <FormField label="Nombre">
-                <FormControl v-model="form.periodo"  placeholder="periodo"/>
+            <FormField>
+                <select v-model="form.periodo" class="w-full">
+                    <option disabled value="">Selecciona el periodo cuatrimestral</option>
+                    <option>Sep-Dic</option> <option>Ene-Abr</option><option>May-Ago</option> 
+                </select>
+            </FormField>
+            <FormField >
                 <FormControl v-model="form.año" placeholder="año" />
+            </FormField>
+            <FormField >
                 <FormControl v-model="form.nomenclatura" placeholder="Nomenclatura" />
-                
             </FormField>
            
             <template #footer>

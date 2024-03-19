@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('recursamientos', function (Blueprint $table) {
             $table->id();
-            $table->String("materia");
-            $table->String("periodo");
-            $table->String("profesor");
+            $table->foreignId('materia_id')->constrained();
+            $table->foreignId("periodo_id")->constrained();
+            $table->foreignId("profesor_id")->constrained();
             $table->String("horarios");
+            $table->integer("cupo");
             $table->timestamps();
         });
     }

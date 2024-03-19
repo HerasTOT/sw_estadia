@@ -19,12 +19,13 @@ return new class extends Migration
             $table->string('matricula');
             $table->integer('grado');
             $table->string('grupo');
-            $table->string('tutor');
-            $table->string('periodo');
+           
             $table->string('materia_recursar');
             $table->integer('status');
             $table->integer('version');
             $table->integer('formato');
+            $table->foreignId('periodo_id')->constrained();
+            $table->foreignId('profesor_id')->constrained();
             $table->timestamps();
         });
     }

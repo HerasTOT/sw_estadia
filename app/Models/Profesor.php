@@ -13,10 +13,7 @@ class Profesor extends Model
         'area',
         'user_id'
        ];
-       public function usuario()
-    {
-        return $this->belongsTo(User::class);
-    }
+      
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -25,5 +22,16 @@ class Profesor extends Model
     {
         return $this->hasOne(Grupo::class);
     }
-    
+    public function academico()
+    {
+        return $this->hasMany(Academico::class, 'profesor_id', 'id');
+    }
+    public function recursamientos()
+{
+    return $this->hasMany(Recursamiento::class, 'profesor_id');
+}
+public function profeuser()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 }

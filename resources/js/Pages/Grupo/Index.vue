@@ -152,7 +152,7 @@ export default {
                     Tutor: {{  item.profesor.user.name }} {{  item.profesor.user.apellido_paterno }} {{  item.profesor.user.apellido_materno }}
                 </p>
                 
-                <!-- Mostrar las materias relacionadas -->
+                
                 <p class="text-sm text-gray-500 dark:text-gray-300">
                     Estudiantes:
                     <span v-for="alumno in item.alumnos" :key="alumno.id">

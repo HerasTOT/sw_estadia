@@ -92,10 +92,20 @@ Route::middleware('auth')->group(function () {
   
     //Formatos  Analiis academico individual, habitos 
     Route::resource('academico', AcademicoController::class)->names('academico');
+    Route::get('academico/create/{version}', [AcademicoController::class, 'create'])->name('academico.create');
+
     Route::resource('habito', HabitoController::class)->names('habito');
     Route::resource('inteligencia', InteligenciaController::class)->names('inteligencia');
     Route::resource('pregunta', PreguntaController::class)->parameters(['pregunta' => 'pregunta']);
     Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
+    Route::get('pregunta/{id}/version/{version_id}', [PreguntaController::class, 'crearnuevapregunta'])->name('pregunta.agregar-pregunta');
+    Route::post('pregunta/crear', [PreguntaController::class, 'storepregunta'])->name('pregunta.store-pregunta');
+    Route::post('pregunta/habilitar', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
+    Route::get('pregunta/{formato_id}/version/{version_id}/estatus/{estatus}', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
+
+    //Route::get('pregunta/{id}/version/{version_id}/estatus/{estatus}', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
+    //Route::get('pregunta/habilitar-formulario', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
+
 
     //Gestion de grupo 
     Route::resource('grupomaterias', GrupoMateriasController::class)->parameters(['grupomaterias' => 'grupomaterias']);
@@ -110,7 +120,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('lista', ListaRecursamientoController::class)->parameters(['lista' => 'lista']);
     Route::get('/lista/{id}/assign-Alumno', [ListaRecursamientoController::class, 'assignAlumnoRecursamiento'])->name('lista.assign-lista.view');
-        //Route::post('/asigngrupo/{id}', [GrupoController::class, 'assignAlumno'])->name('assigngroup.post');
+    //Route::get('/lista/{id}/delete-Alumno', [ListaRecursamientoController::class, 'deleteAlumnoRecursamiento'])->name('lista.delete-lista.view');
+    Route::post('/lista/{id}/eliminar-Alumno/{userId}', [ListaRecursamientoController::class, 'eliminarAlumno'])->name('lista.eliminar-alumno');
 
     Route::resource('encuesta',EncuestaController::class)->parameters(['encuesta'=>'encuesta']);
 });

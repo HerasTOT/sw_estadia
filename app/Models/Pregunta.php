@@ -12,6 +12,8 @@ class Pregunta extends Model
         
         'pregunta',
         'formato',
+        'version',
+        'estatus'
        ];
     
 

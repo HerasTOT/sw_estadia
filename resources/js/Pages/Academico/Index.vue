@@ -21,21 +21,16 @@ import NotificationBar from "@/components/NotificationBar.vue";
 
 
 
+
 export default {
     props: {
         titulo: { type: String, required: true },
-        Academico: {
-            type: Object,
-            required: true
-        },
-        respuestas: {
-            type: Object,
-            required: true
-        },
-        preguntas:{
-            type: Object,
-            required: true
-        },
+        Academico: { type: Object, required: true },
+        profesor: { type: Object, required: true },
+        respuestas: { type: Object, required: true },
+        preguntas:{ type: Object, required: true },
+        periodo:{ type: Object, required: true },
+        versions:{ type: Object, required: true },
         academicoId:{ type: String, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
@@ -63,9 +58,14 @@ export default {
             materia_recursar:'',
             pregunta:'',
             formato:'',
-          
+            version: '',
         });
-
+        const buscarformato = () => {
+            if (form.version) {
+                const url = route('academico.create', { version: form.version });
+        window.location.href = url;
+                }
+        };
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -83,7 +83,7 @@ export default {
         };
 
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, buscarformato,eliminar, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -99,9 +99,9 @@ export default {
 </script>
 
 <template>
+    
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <BaseButton :href="'academico/create' " color="warning" label="Generar formato" />
             <BaseButton :href="`academico/${academicoId}/edit`" color="warning" label="Modificar formato" />
 
         </SectionTitleLineWithButton>
@@ -114,47 +114,51 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
-     
-        <CardBox v-if="Academico">
+        <form @submit.prevent="buscarformato">
+            <select v-model="form.version">
+                <option value="">Formatos disponibles</option>
+                <option v-for="version in versions" :value="version">{{ version }}</option>
+            </select>
+            <button type="submit">Generar formato</button>
+        </form>
+      
+        <CardBox v-for="academico in Academico" :key="academico.id">
             <div>
                 <div>
-                    <strong>Matrícula:</strong> {{ Academico.matricula }}
+                    <strong>Matrícula:</strong> {{ academico.matricula }}
                 </div>
                 <div>
-                    <strong>Grado:</strong> {{ Academico.grado }}
+                    <strong>Grado:</strong> {{ academico.grado }}
                 </div>
                 <div>
-                    <strong>Grupo:</strong> {{ Academico.grupo }}
+                    <strong>Grupo:</strong> {{ academico.grupo }}
+                </div>
+                <div > 
+                    <strong>Tutor:</strong> {{ profesor.name }}
                 </div>
                 <div>
-                    <strong>Tutor:</strong> {{ Academico.tutor }}
-                </div>
-                <div>
-                    <strong>Tutor:</strong> {{ Academico.periodo }}
+                    <strong>Periodo:</strong> {{ periodo.periodo }} {{ periodo.año }}
                 </div>
                 <div>
                     <strong>Materia a recursar:</strong> {{ Academico.materia_recursar}}
                 </div>
-                <div v-for="pregunta in preguntas" :key="pregunta.id">
-                    <strong>{{ pregunta.pregunta }}</strong>
-                    <ul>
-                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuesta.id">
-                            {{ respuesta.respuesta }}
-                        </li>
-                    </ul>
-                    
+                
+                
+                <div v-for="(pregunta, id) in preguntas" :key="id">
+                    <template v-if="pregunta.version === academico.version">
+                        <strong>{{ pregunta.pregunta }}</strong>
+                        <ul>
+                            <li v-for="respuesta in respuestas.filter(item => item.pregunta_id === pregunta.id)" :key="respuesta.id">
+                                {{ respuesta.respuesta }}
+                            </li>
+                        </ul>
+                    </template>
                 </div>
+                
             </div>
 
         </CardBox>
 
-    
-
-        
-        
-   
-      
-        
     </LayoutMain>
 </template>
 

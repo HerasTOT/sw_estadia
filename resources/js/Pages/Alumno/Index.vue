@@ -163,6 +163,5 @@ export default {
             <Pagination :currentPage="Alumno.current_page" :links="Alumno.links"
                 :total="Alumno.links.length - 2"></Pagination>
         </CardBox>
-        {{ usuarios }}
     </LayoutMain>
 </template>

@@ -22,6 +22,11 @@ class Materia extends Model
          {
              return $this->hasMany(Grupo_Materias::class, 'materia_id');
          }
+
+         public function recursamientos()
+        {
+            return $this->hasMany(Recursamiento::class, 'materia_id');
+        }
          
 
 }

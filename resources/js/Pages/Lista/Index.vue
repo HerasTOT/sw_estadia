@@ -25,7 +25,8 @@ export default {
     props: {
         titulo: { type: String, required: true },
         recursamiento: { type: Object, required: true },
-      
+        recursa: { type: Object, required: true },
+        usuario: { type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -62,9 +63,33 @@ export default {
                 }
             });
         };
+        const eliminarAlumno = (recursamientoId, userId) => {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Se eliminará este alumno de la lista de recursamiento",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.post(route("lista.eliminar-alumno", { id: recursamientoId, userId: userId }))
+                .then(() => {
+                    
+                })
+                .catch(() => {
+                    
+                });
+        }
+    });
+};
+
+
 
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, eliminar,eliminarAlumno, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -76,6 +101,7 @@ export default {
 </script>
 
 <template>
+    
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
             <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -106,17 +132,41 @@ export default {
                     class="max-w-full bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                            {{ item.materia }}
+                            {{ item.materia.nombre }}
 
                         </h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-300">
-                            Periodo: {{ item.periodo }}
+                        <p class="text-lg font-semibold text-gray-800 dark:text-white">
+                            Periodo:
+                            <h3 class="text-sm text-gray-500 dark:text-gray-300">
+                              
+                                {{ item.periodo.periodo }} {{ item.periodo.año }}
+                            </h3>
+                           
                         </p>
-                        <p class="text-sm text-gray-500 dark:text-gray-300">
-                            Profesor: {{ item.profesor }}
+                        <p class="text-lg font-semibold text-gray-800 dark:text-white">
+                            Profesor:
+                            <h3 class="text-sm text-gray-500 dark:text-gray-300">
+                              
+                                 {{ item.profesor.user.name }} {{ item.profesor.user.apellido_paterno }} {{ item.profesor.user.apellido_materno }}
+                            </h3>
+                           
                         </p>
-                        <p class="text-sm text-gray-500 dark:text-gray-300">
-                            Horarios: {{ item.horarios }}
+                        <p class=" font-semibold text-gray-800 dark:text-white">
+                            Horarios: 
+                            <h3 class="text-sm text-gray-500 dark:text-gray-300">
+                                {{ item.horarios }}
+                            </h3>
+                        </p>
+
+                        <p class="text-lg font-semibold text-gray-800 dark:text-white">
+                            Alumnos en lista:
+                            <span v-for="(user, index) in item.users" :key="index" class="text-sm text-gray-500 dark:text-gray-300">
+                                <br>
+                                {{ user.name }} {{ user.apellido_paterno }} {{ user.apellido_materno }}
+                                <span  v-if="user.id === usuario.id" class="ml-3">
+                                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminarAlumno(item.id, user.id)" />
+                                </span>
+                            </span>
                         </p>
                     </div>
                     <div class="flex justify-end items-end p-4">

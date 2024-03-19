@@ -5,6 +5,10 @@ import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
+import FormControlV4 from "@/components/FormControlV4.vue";
+
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
@@ -14,11 +18,18 @@ export default {
     props: {
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
+        usuarios: { type: Object, required: true },
+        periodo: { type: Object, required: true },
+        materia: { type: Object, required: true },
+
     },
     components: {
         LayoutMain,
         FormField,
         FormControl,
+        FormControlV2,
+        FormControlV3,
+        FormControlV4,
         BaseDivider,
         BaseButton,
         BaseButtons,
@@ -31,10 +42,11 @@ export default {
         };
 
         const form = useForm({
-            materia: '',
-            periodo: '',
-            profesor: '',
+            materia_id: '',
+            periodo_id: '',
+            profesor_id: '',
             horarios:'',
+            cupo:'',
         });
 
         return { handleSubmit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
@@ -55,13 +67,26 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="handleSubmit">
-            <FormField label="Nombre">
-                <FormControl v-model="form.materia"  placeholder="materia"/>
-                <FormControl v-model="form.periodo" placeholder="periodo" />
-                <FormControl v-model="form.profesor" placeholder="profesor" />
-                <FormControl v-model="form.horarios" placeholder="horarios" />
-               
+            <FormField >
+                <FormControlV4  v-model="form.materia_id" :showOption="name" :options="materia"/>
             </FormField>
+            <FormField >
+                <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
+            </FormField>
+            <FormField >
+                <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
+            </FormField>
+            <FormField >
+                <FormControl v-model="form.horarios" placeholder="horarios" />
+            </FormField>
+            <FormField >
+                <FormControl v-model="form.cupo" placeholder="Cupo maximo de estudiantes" />
+            </FormField>
+               
+                
+                
+               
+            
            
             <template #footer>
                 <BaseButtons>

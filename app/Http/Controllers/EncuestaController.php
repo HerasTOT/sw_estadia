@@ -74,6 +74,7 @@ class EncuestaController extends Controller
             return redirect()->route("{$this->routeName}index")->with('error', 'El usuario ya ha respondido a la encuesta.');
         }
 
+        
         Encuesta::Create([
             'horario' => $request->input('horario'),
             'profesores' => $request->input('profesores'),

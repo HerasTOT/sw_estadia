@@ -158,7 +158,7 @@ if (props.ctrlKFocus) {
       :class="inputElClass"
       :disabled="disabled"
     >
-    <option value="" selected disabled>Seleccione una opción</option>
+    <option value="" selected disabled>Seleccione su profesor</option>
     <option
       v-for="option in options.filter(option => option.role === 'Tutor')"
       :key="option.id ?? option"

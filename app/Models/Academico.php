@@ -13,13 +13,21 @@ class Academico extends Model
         'matricula',
         'grado',
         'grupo',
-        'tutor',
-        'periodo',
+        'profesor_id',
+        'periodo_id',
         'materia_recursar',
         'status',
         'version',
         'formato',
        ];
 
-       
+       public function profesor()
+    {
+        return $this->hasMany(Profesor::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
 }

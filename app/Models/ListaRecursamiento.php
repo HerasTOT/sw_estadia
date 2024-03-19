@@ -12,4 +12,8 @@ class ListaRecursamiento extends Model
         'user_id',
         'recursamiento_id',
        ];
+       public function recursamientos()
+       {
+           return $this->belongsToMany(Recursamiento::class, 'lista_recursamientos', 'user_id', 'recursamiento_id');
+       }
 }

@@ -25,6 +25,7 @@ export default {
     props: {
         titulo: { type: String, required: true },
         Pregunta: { type: Object, required: true },
+        version: { type: Object, required: true },
         Academico: { type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
@@ -42,11 +43,13 @@ export default {
         Pagination,
         NotificationBar
     },
-    setup() {
+    setup(props) {
         const form = useForm({
             pregunta: '',
             formato: '',
+            version: '',
         });
+        const versions = props.version;
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -62,9 +65,18 @@ export default {
                 }
             });
         };
-
+        const habilitarFormulario = () => {
+            form.post(route("pregunta.habilitar"))
+                .then(() => {
+                    // Manejar la respuesta del servidor si es necesario
+                })
+                .catch(error => {
+                    // Manejar cualquier error que ocurra durante la solicitud
+                    console.error(error);
+                });
+        };
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, eliminar, mdiMonitorCellphone,versions,habilitarFormulario,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -74,18 +86,14 @@ export default {
 
 }
 </script>
-
 <template>
+   
     <LayoutMain>
-        <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                    <path
-                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                    <path
-                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                </svg>
-            </a>
+        <SectionTitleLineWithButton  :title="titulo" main>
+            
+            <BaseButton :href="`pregunta/create`" color="warning" label="Nuevo formulario" />
+            <BaseButton @click="habilitarFormulario" color="warning" label="Habilitar formulario" />
+
         </SectionTitleLineWithButton>
        
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
@@ -95,31 +103,48 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
-
+        
         <CardBox v-if="Pregunta.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
         <CardBox v-else class="mb-6" has-table>
+            <form @submit.prevent="buscarPreguntas" class="flex justify-between">
+                <select v-model="form.version">
+                    <option value="">Todas las versiones</option>
+                    <option v-for="version in versions" :value="version">{{ version }}</option>
+                </select>
+                <button type="submit">Buscar</button>
+               
+                <div  class="ml-auto">
+
+                    <BaseButton :href="route('pregunta.agregar-pregunta', { id: 1, version_id: form.version })" color="warning" label="Agregar nueva pregunta" />
+
+                </div>
+               
+            </form>
+            
             <table>
                 <thead>
                     <tr>
                         <th />
                         <th>Preguntas para el formato de analisis de academico individual</th>
-                       
+                       <th>Version</th>
                         <th></th>
                         <th />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in Pregunta.data.filter(item => item.formato === 1)" :key="item.id">
+                    <tr v-for="item in Pregunta.data.filter(item => !form.version || item.version === form.version)" :key="item.id">
                         <td class="align-items-center">
                           {{ item.id }}
                         </td>
-                        <td data-label="Nombre">
+                        <td >
                             {{ item.pregunta }}
                         </td>
-                        
+                        <td >
+                            {{ item.version }}
+                        </td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
                                 <BaseButton color="warning" :icon="mdiApplicationEdit" small
@@ -128,56 +153,12 @@ export default {
                             </BaseButtons>
                         </td>
                     </tr>
-                    
                 </tbody>
             </table>
-
-
 
             <Pagination :currentPage="Pregunta.current_page" :links="Pregunta.links"
                 :total="Pregunta.links.length - 2"></Pagination>
         </CardBox>
 
-        <CardBox v-if="Pregunta.data.length < 1">
-            <CardBoxComponentEmpty />
-        </CardBox>
-
-        <CardBox v-else class="mb-6" has-table>
-            <table>
-                <thead>
-                    <tr>
-                        <th />
-                        <th>Preguntas para el formato de habitos de estudio </th>
-                       
-                        <th></th>
-                        <th />
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in Pregunta.data.filter(item => item.formato === 2)" :key="item.id">
-                        <td class="align-items-center">
-                            {{ item.id }}
-                        </td>
-                        <td data-label="Nombre">
-                            {{ item.pregunta }}
-                        </td>
-                        
-                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="warning" :icon="mdiApplicationEdit" small
-                                    :href="route(`${routeName}edit`, item.id)" />
-                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
-                            </BaseButtons>
-                        </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-
-
-
-            <Pagination :currentPage="Pregunta.current_page" :links="Pregunta.links"
-                :total="Pregunta.links.length - 2"></Pagination>
-        </CardBox>
     </LayoutMain>
 </template>

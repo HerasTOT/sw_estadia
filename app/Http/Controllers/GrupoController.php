@@ -137,9 +137,9 @@ class GrupoController extends Controller
        
         $profesor_id = User::find($request->input('profesor_id'))->profesor;
         $existingAssignment = Grupo::where('profesor_id', $profesor_id->id)
-       
         ->first();
  
+        
     if ($existingAssignment) {
         
         return redirect()->route("{$this->routeName}index")->with('error', 'El profesor ya esta asignado a un grupo');
@@ -209,7 +209,7 @@ class GrupoController extends Controller
        
         $Grupo = Grupo::find($id);
         $profesor = User::find($request->input('profesor_id'))->profesor;
-    
+        
         $Grupo->update([
             'profesor_id' => $profesor->id,
             'grado' => $request->input('grado'),

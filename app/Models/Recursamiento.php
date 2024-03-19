@@ -9,9 +9,35 @@ class Recursamiento extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'materia',
-        'periodo',
-        'profesor',
+        'materia_id',
+        'periodo_id',
+        'profesor_id',
         'horarios',
+        'cupo',
         ];
+
+        public function listaRecursamientos()
+{
+    return $this->belongsToMany(ListaRecursamiento::class, 'lista_recursamientos', 'recursamiento_id', 'user_id');
+}
+
+public function materia()
+{
+    return $this->belongsTo(Materia::class, 'materia_id');
+}
+
+public function periodo()
+{
+    return $this->belongsTo(Periodo::class, 'periodo_id');
+}
+
+public function profesor()
+{
+    return $this->belongsTo(Profesor::class, 'profesor_id');
+}
+
+public function users()
+    {
+        return $this->belongsToMany(User::class, 'lista_recursamientos');
+    }
 }

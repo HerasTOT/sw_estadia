@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ListaRecursamiento;
+use App\Models\Materia;
 use App\Http\Requests\StoreListaRecursamientoRequest;
 use App\Http\Requests\UpdateListaRecursamientoRequest;
 use App\Models\Recursamiento;
@@ -29,16 +30,18 @@ class ListaRecursamientoController extends Controller
    public function index(Request $request): Response
    {
         $user = Auth::user();
-        
-        $recursamiento= Recursamiento::all();
-
-        
+       
+    $recursamiento = Recursamiento::with(['materia', 'periodo', 'profesor.user', 'users'])->get();
      
+    
+    $recursa = ListaRecursamiento::with('recursamientos')->paginate(10);
+    
        return Inertia::render("Lista/Index", [
            'titulo'      => 'lista de recursamiento',
            'recursamiento' => $recursamiento,
            'routeName'      => $this->routeName,
-           
+           'recursa' => $recursa,
+           'usuario' => $user,
            'loadingResults' => false
        ]);
    }
@@ -54,10 +57,17 @@ class ListaRecursamientoController extends Controller
        ->first();
 
    if ($existingAssignment) {
-       // Si ya existe la asignación, puedes manejarlo de acuerdo a tus necesidades.
-       // Puedes redirigir a una página de error o mostrar un mensaje.
+ 
        return redirect()->route("{$this->routeName}index")->with('error', 'El alumno ya está asignado a este recursamiento.');
    }
+   $recursamiento = ListaRecursamiento::where('recursamiento_id', $id)
+    ->count();
+
+    $cupoMaximo = Recursamiento::find($id);
+
+    if ($recursamiento >= $cupoMaximo->cupo) {
+        return redirect()->route("{$this->routeName}index")->with('error', 'El recursamiento ha alcanzado su cupo máximo de alumnos.');
+    }
        ListaRecursamiento::create([
            'user_id' => $user->id,
            'recursamiento_id' => $id,
@@ -66,11 +76,19 @@ class ListaRecursamientoController extends Controller
    
        return redirect()->route("{$this->routeName}index")->with('success', 'Alumno asignado al grupo con éxito!');
    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   public function eliminarAlumno($recursamientoId, $userId)
+{
+    
+    
+    // Buscar el recursamiento por su ID
+    $recursamiento = Recursamiento::findOrFail($recursamientoId);
+   
+    // Verificar si el usuario está asociado con este recursamiento
+    if ($recursamiento->users()->where('user_id', $userId)->exists()) {
+        // Eliminar al usuario de la lista de recursamiento
+        $recursamiento->users()->detach($userId);
+    } 
+}
     public function create()
     {
         //

@@ -6,6 +6,10 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
 
 class AdminSeeder extends Seeder
 {
@@ -16,9 +20,18 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('users')->insert(['name' => 'Santiago', 'apellido_paterno' => 'Heras', 'apellido_materno' => 'Gomez','numero' => '7775420768', 'email' => 'admin@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'Admin']);
+        DB::table('users')->insert(['name' => 'Miguel', 'apellido_paterno' => 'roman', 'apellido_materno' => 'Chano','numero' => '7772052238', 'email' => 'miguel@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'Alumno']);
+        DB::table('users')->insert(['name' => 'Juan paulo', 'apellido_paterno' => 'Sanchez', 'apellido_materno' => 'Hernandez','numero' => '7772054338', 'email' => 'juanpaulo@gmail.com', 'email_verified_at' => '2024-01-17 04:50:32', 'password' => Hash::make('Password'), 'role' =>'Tutor']);
+        $user1 = User::where('email', 'admin@gmail.com')->first();$user1->assignRole('Admin');
+        $user2 = User::where('email', 'miguel@gmail.com')->first(); $user2->assignRole('Alumno');
+        $user3 = User::where('email', 'juanpaulo@gmail.com')->first();$user3->assignRole('Tutor');
+        
         $perfil = Role::where('name', 'Admin')->first();
         $user = Role::where('name', 'Alumno')->first();
-
+        DB::table('profesors')->insert(['grado_academico' => 'Doctor', 'area' => 'Inteligencia Artificial y Aprendizaje Automático', 'user_id' => '3']);
+        DB::table('alumnos')->insert(['cuatrimestre' => 'Miguel', 'matricula' => 'RCMO20032', 'user_id' => '2']);
+  
         
 
         // Cobertura de visibilidad completa

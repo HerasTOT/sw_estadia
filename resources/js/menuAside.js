@@ -105,6 +105,32 @@ export default [
         icon: mdiEmoticonHappyOutline ,
         role: "Alumno",
       }, 
+      {
+        href:"/encuesta",
+        label: "Encuesta recursamientos",
+        icon: mdiBookshelf,
+        role: "Alumno",
+      }, 
+    ]
+  },
+  {
+    label: "Formularios",
+    icon: mdiFileDocumentEditOutline ,
+    role: "Admin",
+    menu: [
+      {
+        href:"/pregunta",
+        label: "Gestion de Formularios",
+        icon: mdiBookshelf,
+        role: "Admin",
+      }, 
+      {
+        href:route('pregunta.habilitar'),
+        label: "Activar Formularios",
+        icon: mdiBookshelf,
+        role: "Admin",
+      }, 
+     
     ]
   },
   {

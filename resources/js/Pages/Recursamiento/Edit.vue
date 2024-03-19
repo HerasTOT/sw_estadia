@@ -4,6 +4,9 @@ import { useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
+import FormControlV4 from "@/components/FormControlV4.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -11,8 +14,13 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'Recursamiento', 'routeName']);
-const form = useForm({ ...props.Recursamiento });
+const props = defineProps(['titulo', 'Recursamiento','periodo','materia','usuarios','profesor','routeName']);
+const form = useForm({
+    ...props.Recursamiento,
+    profesor_id: props.profesor
+   
+});
+
 
 const guardar = () => {
     form.put(route("recursamiento.update", props.Recursamiento.id));
@@ -31,13 +39,20 @@ const guardar = () => {
         </SectionTitleLineWithButton>
 
         <CardBox form @submit.prevent="guardar">
-            <FormField label="Nombre">
-                <FormControl v-model="form.materia"  placeholder="materia"/>
-                <FormControl v-model="form.periodo" placeholder="periodo" />
-                <FormControl v-model="form.profesor" placeholder="profesor" />
+            <FormField >
+                <FormControlV4  v-model="form.materia_id" :showOption="name" :options="materia"/>
+            </FormField>
+            <FormField >
+                <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
+            </FormField>
+            <FormField >
+                <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
+            </FormField>
+            <FormField >
                 <FormControl v-model="form.horarios" placeholder="horarios" />
-                
-              
+            </FormField>
+            <FormField >
+                <FormControl v-model="form.cupo" placeholder="Cupo maximo de estudiantes" />
             </FormField>
 
           

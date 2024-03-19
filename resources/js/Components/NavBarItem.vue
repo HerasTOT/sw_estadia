@@ -52,10 +52,22 @@ const componentClass = computed(() => {
   return base;
 });
 
-const itemLabel = computed(() =>
-  props.item.isCurrentUser ? usePage().props.auth.user.name : props.item.isRol ? usePage().props.auth.user.roles[0].name : props.item.label
-);
-
+const itemLabel = computed(() => {
+  if (props.item.isCurrentUser) {
+    const currentUser = usePage().props.auth.user;
+  const nombreCompleto = `${currentUser.name} ${currentUser.apellido_paterno} ${currentUser.apellido_materno}`;
+  return nombreCompleto;
+  } else if (props.item.isRol) {
+    const roles = usePage().props.auth.user.roles;
+    if (roles.length > 0) {
+      return roles[0].name;
+    } else {
+      return "Sin Rol"; // Cuando el user no tiene rol
+    }
+  } else {
+    return props.item.label;
+  }
+});
 const isDropdownActive = ref(false);
 
 const menuClick = (event) => {

@@ -84,14 +84,14 @@ export default {
                 <FormControl v-model="form.password" placeholder="password" />
             </FormField>
             <FormField :error="form.errors.grado_academico">
-                <select v-model="form.grado_academico">
+                <select v-model="form.grado_academico"  class="w-full">
                     <option disabled value="">Selecciona tu grado academico</option>
                     <option>Educación superior</option> <option>Maestria</option><option>Doctorado</option> 
                 </select>
                       
             </FormField>
             <FormField :error="form.errors.area">
-                <select v-model="form.area">
+                <select v-model="form.area"  class="w-full">
                     <option disabled value="">Selecciona tu area </option>
                     <option>Programación y Desarrollo de Software</option> <option>Redes de Computadoras</option><option>Sistemas Operativos</option> 
                     <option>Bases de Datos</option> <option>Ciberseguridad</option><option>Desarrollo Web</option> 

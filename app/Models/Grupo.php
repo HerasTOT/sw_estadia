@@ -18,6 +18,7 @@ class Grupo extends Model
     {
         return $this->belongsToMany(Alumno::class, 'grupo_alumnos', 'grupo_id', 'alumno_id');
     }
+   
     public function grupoMateria()
     {
         return $this->belongsToMany(Materia::class, 'grupo_materias', 'grupo_id', 'materia_id');
@@ -36,4 +37,5 @@ class Grupo extends Model
     {
         return $this->belongsTo(Profesor::class);
     }
+
 }

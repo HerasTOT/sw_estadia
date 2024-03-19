@@ -83,7 +83,7 @@ export default {
             </FormField>
             <FormField :error="form.errors.profesor_id">
                     <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
-                </FormField>
+             </FormField>
             </FormField>
             
            

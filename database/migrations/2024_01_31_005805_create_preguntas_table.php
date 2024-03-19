@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('pregunta');
             $table->integer('formato');
+            $table->integer('version');
+            $table->integer('estatus');
             $table->timestamps();
         });
 
