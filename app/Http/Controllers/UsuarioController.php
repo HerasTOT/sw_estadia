@@ -53,6 +53,31 @@ class UsuarioController extends Controller
            
 
         return Inertia::render("{$this->source}Index", [
+            'titulo'   => ' Administradores',
+            'usuarios' => $usuarios,
+            'alumnos' => $alumnos,
+            'admin' => $admin,
+            'profesores' => $profesores,
+            'profiles' => Role::get(['id', 'name']),
+            'routeName'=> $this->routeName,
+            'loadingResults' => false,
+        ]);
+    }
+    public function profe(Request $request): Response
+    {
+
+        $alumnos = Alumno::with('user')->get();
+        $profesores = Profesor::with('user')->get();
+        $admin = User::where('role', 'Admin')->get();
+
+        $usuarios = $this->model::with('roles')
+            ->orderBy('id')
+            ->paginate(30)
+            ->withQueryString();
+
+           
+
+        return Inertia::render("Seguridad/Usuarios/indexProfesor", [
             'titulo'   => ' Usuarios',
             'usuarios' => $usuarios,
             'alumnos' => $alumnos,

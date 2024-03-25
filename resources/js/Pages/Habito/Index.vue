@@ -25,9 +25,12 @@ export default {
     props: {
         titulo: { type: String, required: true },
         preguntas:{ type: Object, required: true },
-        habito: { type: Object, required: true },
+        Habito: { type: Object, required: true },
         habitoId: { type: String, required: true },
         respuestas:{ type: Object, required: true },
+        profesor:{ type: Object, required: true },
+        periodo:{ type: Object, required: true },
+        version:{ type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -53,7 +56,14 @@ export default {
             periodo:'',
             formato:'',
             pregunta:'',
+            version: '',
         });
+        const buscarformato = () => {
+            if (form.version) {
+                const url = route('habito.create', { version: form.version });
+        window.location.href = url;
+                }
+        };
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -71,7 +81,7 @@ export default {
         };
 
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, eliminar, mdiMonitorCellphone,buscarformato,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -85,9 +95,6 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <BaseButton :href="'habito/create' " color="warning" label="Generar formato" />
-            <BaseButton :href="`habito/${habitoId}/edit`" color="warning" label="Modificar formato" />
-
         </SectionTitleLineWithButton>
        
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
@@ -97,8 +104,16 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
-
-        <CardBox v-if="habito">
+        <form @submit.prevent="buscarformato">
+            <select v-model="form.version">
+                <option value="">Formatos disponibles</option>
+                <option v-for="version in version" :value="version">{{ version }}</option>
+            </select>
+            <button type="submit">Generar formato</button>
+        </form>
+        
+        <CardBox v-for="habito in Habito" :key="habito.id">
+            <template v-if="habito.estatus === 1">
             <div>
                 <div>
                     <strong>Matrícula:</strong> {{ habito.matricula }}
@@ -109,24 +124,27 @@ export default {
                 <div>
                     <strong>Grupo:</strong> {{ habito.grupo }}
                 </div>
-                <div>
-                    <strong>Tutor:</strong> {{ habito.tutor }}
+                <div > 
+                    <strong>Tutor:</strong> {{ profesor.name }}
                 </div>
                 <div>
-                    <strong>Tutor:</strong> {{ habito.periodo }}
+                    <strong>Periodo:</strong> {{ periodo.periodo }} {{ periodo.año }}
                 </div>
-                <div v-for="pregunta in preguntas" :key="pregunta.id">
-                    <strong>{{ pregunta.pregunta }}</strong>
-                    <ul>
-                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id )" :key="respuesta.id">
-                            {{ respuesta.respuesta }}
-                        </li>
-                    </ul>
-                    
+                <div v-for="(pregunta, id) in preguntas" :key="id">
+                    <template v-if="pregunta.version === habito.version">
+                        <strong>{{ pregunta.pregunta }}</strong>
+                        <ul>
+                            <li v-for="respuesta in respuestas.filter(item => item.pregunta_id === pregunta.id)" :key="respuesta.id">
+                                {{ respuesta.respuesta }}
+                            </li>
+                        </ul>
+                    </template>
                 </div>
-            </div>
+              
+                <BaseButton :href="`habito/${habito.id}/edit/${habito.version}`" color="warning" label="Modificar formato"  style="float: right;"/>
 
-        </CardBox>
-        
+            </div>
+            </template>
+            </CardBox>
     </LayoutMain>
 </template>

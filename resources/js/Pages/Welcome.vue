@@ -28,7 +28,7 @@ const { canLogin,  recursamientos, routeName } = defineProps([
     <LayoutWelcome>
       hola
 {{ recursamientos }}
-josadfp
+
 
     </LayoutWelcome>
  

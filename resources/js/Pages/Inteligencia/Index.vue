@@ -25,9 +25,12 @@ export default {
     props: {
         titulo: { type: String, required: true },
         preguntas:{ type: Object, required: true },
-        inteligencia: { type: Object, required: true },
+        Inteligencia: { type: Object, required: true },
         inteligenciaId:{ type: String, required: true },
         respuestas: { type: Object, required: true },
+        version: { type: Object, required: true },
+        periodo: { type: Object, required: true },
+        profesor: { type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -54,6 +57,12 @@ export default {
             formato:'',
             pregunta:'',
         });
+        const buscarformato = () => {
+            if (form.version) {
+                const url = route('inteligencia.create', { version: form.version });
+        window.location.href = url;
+                }
+        };
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -71,7 +80,7 @@ export default {
         };
 
         return {
-            form, eliminar, mdiMonitorCellphone,
+            form, eliminar, mdiMonitorCellphone,buscarformato,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -85,8 +94,6 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <BaseButton :href="'inteligencia/create' " color="warning" label="Generar formato" />
-            <BaseButton :href="`inteligencia/${inteligenciaId}/edit`" color="warning" label="Modificar formato" />
 
         </SectionTitleLineWithButton>
        
@@ -97,8 +104,16 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
-
-        <CardBox v-if="inteligencia">
+        
+        <form @submit.prevent="buscarformato">
+            <select v-model="form.version">
+                <option value="">Formatos disponibles</option>
+                <option v-for="version in version" :value="version">{{ version }}</option>
+            </select>
+            <button type="submit">Generar formato</button>
+        </form>
+        <CardBox v-for="inteligencia in Inteligencia" :key="inteligencia.id">
+            <template v-if="inteligencia.estatus === 1">
             <div>
                 <div>
                     <strong>Matrícula:</strong> {{ inteligencia.matricula }}
@@ -109,24 +124,28 @@ export default {
                 <div>
                     <strong>Grupo:</strong> {{ inteligencia.grupo }}
                 </div>
-                <div>
-                    <strong>Tutor:</strong> {{ inteligencia.tutor }}
+                <div > 
+                    <strong>Tutor:</strong> {{ profesor.name }}
                 </div>
                 <div>
-                    <strong>Tutor:</strong> {{ inteligencia.periodo }}
+                    <strong>Periodo:</strong> {{ periodo.periodo }} {{ periodo.año }}
                 </div>
-                <div v-for="pregunta in preguntas" :key="pregunta.id">
-                    <strong>{{ pregunta.pregunta }}</strong>
-                    <ul>
-                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id )" :key="respuesta.id">
-                            {{ respuesta.respuesta }}
-                        </li>
-                    </ul>
-                    
+                <div v-for="(pregunta, id) in preguntas" :key="id">
+                    <template v-if="pregunta.version === inteligencia.version">
+                        <strong>{{ pregunta.pregunta }}</strong>
+                        <ul>
+                            <li v-for="respuesta in respuestas.filter(item => item.pregunta_id === pregunta.id)" :key="respuesta.id">
+                                {{ respuesta.respuesta }}
+                            </li>
+                        </ul>
+                    </template>
                 </div>
-            </div>
+              
+                <BaseButton :href="`inteligencia/${inteligencia.id}/edit/${inteligencia.version}`" color="warning" label="Modificar formato"  style="float: right;"/>
 
-        </CardBox>
+            </div>
+            </template>
+            </CardBox>
 
     </LayoutMain>
 </template>

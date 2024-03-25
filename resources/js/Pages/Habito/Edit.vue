@@ -4,6 +4,8 @@ import { useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -11,11 +13,13 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 
-const props = defineProps(['titulo', 'habito','preguntas','respuestas', 'routeName']);
+const props = defineProps(['titulo', 'habito','preguntas','respuestas','version','profesor', 'periodo','usuarios','routeName']);
 
 const form = useForm({ 
 ...props.habito,
-respuestas:{}
+
+respuestas:{},
+profesor_id: props.profesor
 
 });
 
@@ -64,33 +68,38 @@ function updateFormWithWatchData() {
                 <FormControl v-model="form.matricula"  placeholder="Matricula"/>
              </FormField>
              <FormField label="Grado">
-                <FormControl v-model="form.grado" placeholder="grado" />
-             </FormField>
-             <FormField label="Grupssss">
-                <FormControl v-model="form.grupo" placeholder="grupo" />
-             </FormField>
+                <select v-model="form.grado" class="w-full">
+                    <option disabled value="">Selecciona el grado </option>
+                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                    <option>7</option> <option>8</option><option>9</option><option>10</option>
+                </select>
+            </FormField>
+            <FormField label="Grupo">
+                <select v-model="form.grupo" class="w-full">
+                    <option disabled value="">Selecciona el grupo</option>
+                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
+                </select>
+            </FormField>
              <FormField label="Tutor">
-                <FormControl v-model="form.tutor" placeholder="tutor" />
-             </FormField>
-             <FormField label="Periodo">
-                <FormControl v-model="form.periodo" placeholder="periodo" />
-             </FormField>
-             <FormField label="Habito">
-                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                <FormControlV2 v-model="form.profesor_id" :showOption="name" :options="usuarios" />
+            </FormField>
+            <FormField >
+                <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
+            </FormField>
+             
+            <CardBox v-for="pregunta in preguntas" :key="pregunta.id">
+                <div>
                     <p style="font-size: 20px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p>
                     <ul>
-                        <li v-for="respuestaForm in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuestaForm.id">
-                            
-                            <FormControl v-model="respuestaForm.respuesta" />
+                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuesta.id">
+                            <FormControl v-model="respuesta.respuesta" />
                         </li>
                     </ul>
-                    <br>
                 </div>
-            </FormField>
-        
+            </CardBox>
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="handleSubmit" type="submit" color="info" label="Actualizar" />
+                    <BaseButton @click="handleSubmit" type="submit" color="warning" label="Actualizar" />
                     <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>

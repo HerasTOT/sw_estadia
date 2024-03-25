@@ -47,7 +47,6 @@ export default {
             periodo_id:'',
             materia_recursar:'',
             formato: '1',
-            status:0,
             version: props.version,
             respuestas:[], // Inicializa con un arreglo del tamaño de props.preguntas lleno de undefined
             pregunta_id: [],

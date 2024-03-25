@@ -67,7 +67,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("materia.destroy", id));
+                    form.delete(route("periodo.destroy", id));
                 }
             });
         };

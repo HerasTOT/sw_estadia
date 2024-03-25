@@ -32,14 +32,14 @@ class ProfesorController extends Controller
      public function index(Request $request): Response
     {
         $usuarios = User::all();
-         $Profesor = $this->model;
-        $Profesor = $Profesor->when($request->search, function ($query, $search) {
-            if ($search != '') {
-                    $query->where('name',          'LIKE', "%$search%");
-                    $query->orWhere('status', 'LIKE', "%$search%");
-                }
-            })->paginate(10)->withQueryString();
-    
+        $Profesor = $this->model;
+        
+        $Profesor = Profesor::with('user')->get();
+        $usuarios = User::with('roles')
+        ->orderBy('id')
+        ->paginate(30)
+        ->withQueryString();
+
             return Inertia::render("Profesor/Index", [
                 'titulo'      => 'Profesor  ',
                 'Profesor'    => $Profesor,
@@ -85,7 +85,7 @@ class ProfesorController extends Controller
         $newUser->profesor()->save($profesor);
        
  
-         return redirect()->route("usuarios.index")->with('message', 'Profesor generado con éxito');
+         return redirect()->route("profesor.index")->with('message', 'Profesor generado con éxito');
    
     }
 
@@ -127,7 +127,7 @@ class ProfesorController extends Controller
          $usuario->delete();
         
 
-        return redirect()->route("usuarios.index")->with('success', 'Profesor eliminada con éxito');
+        return redirect()->route("profesor.index")->with('success', 'Profesor eliminado con éxito');
         
        
         

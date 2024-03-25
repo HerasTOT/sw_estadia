@@ -5,11 +5,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Inteligencia;
 use App\Http\Requests\StoreInteligenciaRequest;
 use App\Http\Requests\UpdateInteligenciaRequest;
+use App\Models\Periodo;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\Pregunta;
+use App\Models\Profesor;
 use App\Models\Respuesta;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class InteligenciaController extends Controller
 {
@@ -33,71 +37,90 @@ class InteligenciaController extends Controller
     $user = Auth::user();
     $inteligenciaId = $user->inteligencia ? $user->inteligencia->id : null;
     $inteligencia = $user->inteligencia;
-    $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
-        $query->where('formato', 3);
-    })->get();
-
+    $inteligencias = Inteligencia::where('user_id', $user->id)->get();
+    $profesor = $inteligencia ? Profesor::find($inteligencia->profesor_id) : null;
+    $usuarioProfesor = $profesor ? User::find($profesor->user_id) : null;
+    $periodo = $inteligencia ? Periodo::find($inteligencia->periodo_id) : null;
+        $versions = DB::table('preguntas')
+        ->where('estatus', 1)
+        ->where('formato', 3)
+        ->distinct()->pluck('version')->toArray();
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+            $query->where('formato', 3)
+            ->where('estatus', 1);
+        })->get();
         $preguntas = $respuestas->pluck('pregunta')->unique();
-
-     
        return Inertia::render("Inteligencia/Index", [
            'titulo'      => 'Formato de inteligencias multiples',
            'routeName'      => $this->routeName,
-           'inteligencia'      => $inteligencia, 
+           'Inteligencia'      => $inteligencias, 
            'inteligenciaId'      => $inteligenciaId,   
            'preguntas' => $preguntas,
            'respuestas' => $respuestas,
+           'version'    => $versions,
+           'profesor'   => $usuarioProfesor,
+           'periodo'    => $periodo,
            'loadingResults' => false
        ]);
    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    
+    public function create($version)
     {
-        $preguntas = Pregunta::all();
+        $user = auth()->user();
+        $existeHabito = Inteligencia::where('user_id', $user->id)
+        ->where('version', $version)
+        ->where('formato', 3)
+        ->exists();
+        if ($existeHabito) {
+            return redirect()->route('inteligencia.index')->with('error', 'Ya has constestado este formato.');
+        }
+        $preguntas = Pregunta::where('version', $version)
+        ->where('formato', 3)
+        ->get();
+        $usuarios = User::all();
+        $periodo = Periodo::all();
 
         return Inertia::render("Inteligencia/Create", [
             'titulo'      => 'Formato de inteligencias multiples',
             'routeName'      => $this->routeName,
             'preguntas'      => $preguntas,  
+            'usuarios'       =>$usuarios,
+            'periodo'        =>$periodo,
+            'version'        =>$version,
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreInteligenciaRequest  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(StoreInteligenciaRequest $request)
     {
         $user = auth()->user();
-
+        $profesor = User::find($request->input('profesor_id'))->profesor;
+        $periodo = Periodo::find($request->input('periodo_id'));
         Inteligencia::create([
-            'user_id' => $user->id,
-            'matricula' => $request->input('matricula'),
-            'grado' => $request->input('grado'),
-            'grupo' => $request->input('grupo'),
-            'tutor' => $request->input('tutor'),
-            'periodo' => $request->input('periodo'),
-            'formato' => $request->input('formato'),
+            'user_id'     => $user->id,
+            'matricula'   => $request->input('matricula'),
+            'grado'       => $request->input('grado'),
+            'grupo'       => $request->input('grupo'),
+            'formato'     => $request->input('formato'),
+            'profesor_id' => $profesor->id,
+            'periodo_id'  => $periodo->id,
+            'version' => $request->input('version'),
+            'estatus'     => 1,
             ]);
 
-            $respuestas = $request->input('respuestas'); // Cambiado de 'respuesta' a 'respuestas'
-          
+            $respuestas = $request->input('respuestas');
+
             if (!is_null($respuestas) && is_array($respuestas)) {
-                foreach ($respuestas as $pregunta_id => $respuesta) { // Recorre el array asociativo con índice de pregunta
-                    if($pregunta_id != null){
-                    Respuesta::create([
-                        'respuesta' => $respuesta,
-                        'user_id' => $user->id,
-                        'pregunta_id' => $pregunta_id, // Usa directamente el ID de la pregunta
-                    ]);
-                }
+                foreach ($respuestas as $pregunta_id => $respuesta) {
+                    // Verifica si la respuesta no es nula antes de guardarla
+                    if (!is_null($respuesta) && $respuesta !== '') {
+                        Respuesta::create([
+                            'respuesta' => $respuesta,
+                            'user_id' => $user->id,
+                            'pregunta_id' => $pregunta_id,
+                        ]);
+                    }
                 }
             }
             return redirect()->route("inteligencia.index")->with('succes', 'grupo generado con éxito');
@@ -109,21 +132,32 @@ class InteligenciaController extends Controller
     }
 
  
-    public function edit($id)
+    public function edit($id, $version)
     {
         $user = Auth::user();
-        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) use ($version) {
             $query->where('formato', 3);
+            $query->where('version', $version);
         })->get();
+        $inteligencia = Inteligencia::find($id);
         $preguntas = $respuestas->pluck('pregunta')->unique();
+        $profesor = $inteligencia->profesor_id;
+        $usuarioProfesor = User::whereHas('profesor', function ($query) use ($profesor) {
+            $query->where('id', $profesor);
+        })->first();
+        $usuarios = User::all();
+        $periodo = Periodo::all();
 
         $inteligencia= Inteligencia::find($id);
         return Inertia::render("Inteligencia/Edit", [
-            'titulo'      => 'Modificar formulario jkbnjk',
-            'inteligencia'    => $inteligencia,
+            'titulo'      => 'Modificar formulario ',
+            'Inteligencia'    => $inteligencia,
             'respuestas'     => $respuestas,
             'preguntas'      => $preguntas,  
-
+            'version'        => $version,
+            'usuarios'       => $usuarios,
+            'periodo'        => $periodo,
+            'profesor'       =>$usuarioProfesor->id,
             'routeName'      => $this->routeName,
         ]);
     }
@@ -134,7 +168,19 @@ class InteligenciaController extends Controller
         $user = Auth::user();
 
         $Inteligencia = Inteligencia::find($id);
-        $Inteligencia->update($request->all());
+        $profesor = User::find($request->input('profesor_id'))->profesor;
+
+        $Inteligencia->update([
+            'matricula' => $request->input('matricula'),
+            'grado' => $request->input('grado'),
+            'grupo' => $request->input('grupo'),
+            'estatus' => $request->input('estatus'),
+            'version' => $request->input('version'),
+            'formato' => $request->input('formato'),
+            'periodo_id' => $request->input('periodo_id'),
+            'profesor_id' => $profesor->id, 
+            
+        ]);
 
         
         

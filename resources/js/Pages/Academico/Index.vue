@@ -102,8 +102,6 @@ export default {
     
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <BaseButton :href="`academico/${academicoId}/edit`" color="warning" label="Modificar formato" />
-
         </SectionTitleLineWithButton>
         
 
@@ -123,6 +121,7 @@ export default {
         </form>
       
         <CardBox v-for="academico in Academico" :key="academico.id">
+            <template v-if="academico.estatus === 1">
             <div>
                 <div>
                     <strong>Matrícula:</strong> {{ academico.matricula }}
@@ -154,9 +153,12 @@ export default {
                         </ul>
                     </template>
                 </div>
-                
-            </div>
+                <div>
+                    <BaseButton :href="`academico/${academicoId}/edit/${academico.version}`" color="warning" label="Modificar formato" style="float: right;"/>
 
+                </div>
+            </div>
+        </template>
         </CardBox>
 
     </LayoutMain>

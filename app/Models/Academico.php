@@ -16,7 +16,7 @@ class Academico extends Model
         'profesor_id',
         'periodo_id',
         'materia_recursar',
-        'status',
+        'estatus',
         'version',
         'formato',
        ];

@@ -7,6 +7,7 @@ use App\Http\Requests\StorePreguntaRequest;
 use App\Http\Requests\UpdatePreguntaRequest;
 use Illuminate\Http\Request;
 use App\Models\Academico;
+use App\Models\Habito;
 use Illuminate\Support\Facades\DB;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -58,24 +59,69 @@ class PreguntaController extends Controller
     public function habilitar()
     {
         $Pregunta = $this->model;
-        $Pregunta = $Pregunta->where('formato',1);
-        $versions = DB::table('preguntas')->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
-
+        $Pregunta = $Pregunta->where('formato',2);
+        $versionsByFormat = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $formato = '';
+            switch ($i) {
+                case 1:
+                    $formato = 'Formato Análisis académico individual';
+                    break;
+                case 2:
+                    $formato = 'Formato Hábitos de estudio';
+                    break;
+                case 3:
+                    $formato = 'Formato Inteligencias múltiples';
+                    break;
+            }
+    
+            $versionsByFormat[$formato] = DB::table('preguntas')
+                                            ->where('formato', $i)
+                                            ->distinct()
+                                            ->pluck('version')
+                                            ->toArray();
+        }
+    
+    
         return Inertia::render("Pregunta/habilitar", [
-            'titulo'      => 'habilitar formulariosssssss',
+            'titulo'      => 'Habilitar formularios',
             'routeName'      => $this->routeName,
             'pregunta'  => $Pregunta,
-            'version'   => $versions,
+            'version'   => $versionsByFormat,
+           
+
         ]);
 
     }
     public function habilitarFormulario($formato_id, $version_id, $estatus)
     {
 
+        
+       
+       switch ($formato_id) {
+           case 'Formato Análisis académico individual':
+               $formato_id = 1;
+               break;
+           case 'Formato Hábitos de estudio':
+               $formato_id = 2;
+               break;
+           case 'Formato Inteligencias múltiples':
+               $formato_id = 3;
+               break;
+           
+       }
        
         $preguntas = Pregunta::where('formato', $formato_id)
         ->where('version', $version_id)
         ->get();
+
+        Habito::where('formato', $formato_id)
+        ->where('version', $version_id)
+        ->update(['estatus' => $estatus]);
+        
+        Academico::where('formato', $formato_id)
+        ->where('version', $version_id)
+        ->update(['estatus' => $estatus]);
         
         if ($estatus === '1') {
           
@@ -83,20 +129,23 @@ class PreguntaController extends Controller
                 $pregunta->estatus = 1;
                 $pregunta->save();
             }
+            return redirect()->route("pregunta.index")->with('success', 'Formulario activado.');
+
         } elseif ($estatus === '0') {
             foreach ($preguntas as $pregunta) {
                 $pregunta->estatus = 0;
                 $pregunta->save();
             }
+            return redirect()->route("pregunta.index")->with('success', 'Formulario desactivado.');
+
         } else {
         return redirect()->route("pregunta.index")->with('error', 'Estatus inválido.');
         }
-        return redirect()->route("pregunta.index")->with('success', 'Estatus actualizado correctamente.');
 
     }
     public function create()
     {
-        $versions = DB::table('preguntas')->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
+        $versions = DB::table('preguntas')->distinct()->pluck('version')->toArray(); 
         return Inertia::render("Pregunta/Create", [
             'titulo'      => 'Crear nuevo formulario',
             'routeName'      => $this->routeName,
@@ -128,16 +177,19 @@ class PreguntaController extends Controller
     
     public function store(StorePreguntaRequest $request)
     {
-        $versionAnterior = $request->input('version') - 1;
+        
+        
+        $Formato= $request->input('formato');
+        $versionAnterior = Pregunta::where('formato', $Formato)
+        ->max('version');
         $preguntasVersionAnterior = Pregunta::where('version', $versionAnterior)
-            ->where('formato', 1)
+            ->where('formato',$Formato )
             ->get();
-    
         foreach ($preguntasVersionAnterior as $pregunta) {
             $nuevaPregunta = new Pregunta([
                 'pregunta' => $pregunta->pregunta,
-                'formato' => $pregunta->formato,
-                'version' => $request->input('version'), 
+                'formato' => $request->input('formato'),
+                'version' => $versionAnterior+1, 
                 'estatus'  => $request->input('estatus'), 
             ]);
             $nuevaPregunta->save();
@@ -148,7 +200,7 @@ class PreguntaController extends Controller
             Pregunta::create([
                 'pregunta' => $pregunta['pregunta'],
                 'formato' => $request->input('formato'),
-                'version' => $request->input('version'),
+                'version' => $versionAnterior+1,
                 'estatus'  => $request->input('estatus'), 
             ]);
         }

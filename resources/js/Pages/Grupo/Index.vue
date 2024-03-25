@@ -68,38 +68,28 @@ export default {
                 }
             });
         };
-        const eliminarAlumno = (grupoId, alumnoId, index) => {
-            Swal.fire({
-                title: "¿Está seguro?",
-                text: "Esta acción no se puede revertir",
-                icon: "warning",
-                showCancelButton: true,
-                cancelButtonColor: "#d33",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "Sí, eliminar estudiante del grupo",
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    // Utiliza Axios para realizar la solicitud HTTP y automáticamente incluir el token CSRF
-                    axios.post(route("grupo.remove-alumno"), {
-                        alumno_id: alumnoId,
-                        grupo_id: grupoId,
-                    })
-                    .then((response) => {
-                        // Eliminar el alumno de la lista
-                        props.alumnos.splice(index, 1);
-                        Swal.fire({
-                            title: "Éxito",
-                            text: "Estudiante eliminado del grupo con éxito",
-                            icon: "success",
-                        });
-                    })
-                    .catch((error) => {
-                        
-                       
-                    });
-                }
-            });
-        };
+        const eliminarAlumno = (recursamientoId, userId) => {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Se eliminará este alumno de la lista de recursamiento",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.post(route("grupo.remove-alumno", { id: recursamientoId, userId: userId }))
+                .then(() => {
+                    
+                })
+                .catch(() => {
+                    
+                });
+        }
+    });
+};
 
 
         return {

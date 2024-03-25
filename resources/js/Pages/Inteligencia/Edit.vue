@@ -5,6 +5,8 @@ import { useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -12,23 +14,21 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 import { mdiBallotOutline} from "@mdi/js";
-const props = defineProps(['titulo', 'Inteligencia','respuestas', 'preguntas','routeName']);
+const props = defineProps(['titulo', 'Inteligencia','respuestas','usuarios','periodo','profesor', 'preguntas','routeName']);
 
 
 const form = useForm({ 
 ...props.Inteligencia,
-respuestas:{}
+...props.profesor,
+respuestas:{},
+profesor_id: props.profesor
 
 });
 
 
-
 const handleSubmit = () => {
-    updateFormWithWatchData();
-    console.log('Datos del formulario:', form);
-    form.put(route("inteligencia.update"));
+    form.put(route("inteligencia.update", props.Inteligencia.id));
 };
-
 watch(
     () => form,
     (newValue) => {
@@ -53,6 +53,7 @@ function updateFormWithWatchData() {
         form.respuestas[respuesta.pregunta.id] = respuesta;
     });
 }
+
 </script>
 <template>
     <LayoutMain :title="titulo">
@@ -69,17 +70,24 @@ function updateFormWithWatchData() {
                 <FormControl v-model="form.matricula"  placeholder="Matricula"/>
              </FormField>
              <FormField label="Grado">
-                <FormControl v-model="form.grado" placeholder="grado" />
-             </FormField>
-             <FormField label="Grupo">
-                <FormControl v-model="form.grupo" placeholder="grupo" />
-             </FormField>
-             <FormField label="Tutor">
-                <FormControl v-model="form.tutor" placeholder="tutor" />
-             </FormField>
-             <FormField label="Periodo">
-                <FormControl v-model="form.periodo" placeholder="periodo" />
-             </FormField>
+                <select v-model="form.grado" class="w-full">
+                    <option disabled value="">Selecciona el grado </option>
+                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
+                    <option>7</option> <option>8</option><option>9</option><option>10</option>
+                </select>
+            </FormField>
+            <FormField label="Grupo">
+                <select v-model="form.grupo" class="w-full">
+                    <option disabled value="">Selecciona el grupo</option>
+                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
+                </select>
+            </FormField>
+            <FormField label="Tutor">
+                <FormControlV2 v-model="form.profesor_id" :showOption="name" :options="usuarios" />
+            </FormField>
+            <FormField >
+                <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
+            </FormField>
              
              <FormField label="Inteligencias multiples">
                 <div v-for="pregunta in preguntas" :key="pregunta.id">
@@ -96,7 +104,7 @@ function updateFormWithWatchData() {
           
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="handleSubmit" type="submit" color="info" label="Actualizar" />
+                    <BaseButton @click="handleSubmit" type="submit" color="warning" label="Actualizar" />
                     <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>

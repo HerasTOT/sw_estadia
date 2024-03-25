@@ -32,15 +32,12 @@ class AlumnoController extends Controller
     {
         $usuarios = User::all();
         $Alumno = $this->model;
-        $alumnos = Alumno::with('usuario')->get();
-
-        $Alumno = $Alumno::with('usuario') 
-        ->when($request->search, function ($query, $search){
-            if ($search != '') {
-                $query->where('name',          'LIKE', "%$search%");
-                $query->orWhere('status', 'LIKE', "%$search%");
-            }
-        })->paginate(10)->withQueryString();
+        
+        $Alumno = Alumno::with('user')->get();
+        $usuarios = User::with('roles')
+        ->orderBy('id')
+        ->paginate(30)
+        ->withQueryString();
 
         return Inertia::render("Alumno/Index", [
             'titulo'      => 'Alumnos  ',
@@ -97,7 +94,7 @@ class AlumnoController extends Controller
     
         $newUser->alumno()->save($alumno);
 
-        return redirect()->route("usuarios.index")->with('message', 'Alumno generado con éxito');
+        return redirect()->route("alumno.index")->with('success', 'Alumno generado con éxito');
   
     }
 

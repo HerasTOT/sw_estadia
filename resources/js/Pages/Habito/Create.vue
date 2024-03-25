@@ -4,6 +4,8 @@ import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
+import FormControlV2 from "@/components/FormControlV2.vue";
+import FormControlV3 from "@/components/FormControlV3.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -15,11 +17,16 @@ export default {
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
         preguntas:{ type: Object, required: true },
+        usuarios:{ type: Object, required: true },
+        periodo:{ type: Object, required: true },
+        version: { type: String, required: true },
     },
     components: {
         LayoutMain,
         FormField,
         FormControl,
+        FormControlV2,
+        FormControlV3,
         BaseDivider,
         BaseButton,
         BaseButtons,
@@ -28,7 +35,7 @@ export default {
     },
   
    
-    setup() {
+    setup(props) {
         const handleSubmit = () => {
             form.post(route('habito.store'));
         };
@@ -37,10 +44,10 @@ export default {
             matricula: '',
             grado: '',
             grupo: '',
-            tutor:'',
-            periodo:'',
+            profesor_id:'',
+            periodo_id:'',
             formato:'2',
-            
+            version: props.version,
             respuestas:[], 
             pregunta_id: [],
         });
@@ -83,25 +90,22 @@ export default {
                         <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
                     </select>
             </FormField>
-            
-            
-            <FormField>
-                <FormControl v-model="form.tutor" placeholder="Tutor" class="w-full"/>
+            <FormField >
+                <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>
             </FormField>
-            
-            <FormField>
-                <select v-model="form.periodo" class="w-full">
-                    <option disabled value="">Selecciona el periodo cuatrimestral</option>
-                    <option>Sep-Dic</option> <option>Ene-Abr</option><option>May-Ago</option> 
-                </select>
+            <FormField >
+                <FormControlV3  v-model="form.periodo_id" :showOption="name" :options="periodo"/>
             </FormField>
+           
             
           
             <FormField label="Habitos de estudio">
-                <div v-for="pregunta in preguntas.filter(item => item.formato === 2)" :key="pregunta.id">
-                    <p style="font-size: 18px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p> 
-                    <FormControl  v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)"/>
-                    <br>
+                <div v-for="pregunta in preguntas" :key="pregunta.id">
+                    <template v-if="pregunta.formato === 2">
+                        <p style="font-size: 18px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p> 
+                        <FormControl v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)"/>
+                        <br>
+                    </template>
                 </div>
             </FormField>
             <template #footer>

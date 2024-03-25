@@ -47,8 +47,10 @@ class AcademicoController extends Controller
        $profesor = $Academico ? Profesor::find($Academico->profesor_id) : null;
        $periodo = $Academico ? Periodo::find($Academico->periodo_id) : null;
        $usuarioProfesor = $profesor ? User::find($profesor->user_id) : null;
-       $versions = DB::table('preguntas')->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
-
+       $versions = DB::table('preguntas')
+       ->where('estatus',1)
+       ->where('formato', 1)
+       ->distinct()->pluck('version')->toArray();
        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
             $query->where('formato', 1);
         })->get();
@@ -78,11 +80,18 @@ class AcademicoController extends Controller
         
         $periodo =Periodo::all();
         $usuarios = User::all();
-        
+        $user = auth()->user();
+        $existeAcademico = Academico::where('user_id', $user->id)
+                                ->where('version', $version)
+                                ->where('formato', 1)
+                                ->exists();
+         if ($existeAcademico) {
+            return redirect()->route('academico.index')->with('error', 'Ya has constestado este formato.');
+            }
         return Inertia::render("Academico/Create", [
             'titulo'      => 'Analisis',
             'routeName'      => $this->routeName,
-            'preguntas'      => $preguntas,  
+            'preguntas'      => $preguntas,
             'periodo' => $periodo,
             'version' => $version,
             'usuarios' => $usuarios,
@@ -92,13 +101,11 @@ class AcademicoController extends Controller
     
     public function store(StoreAcademicoRequest $request)
     {
+
         $user = auth()->user();
         $profesor = User::find($request->input('profesor_id'))->profesor;
         $periodo = Periodo::find($request->input('periodo_id'));
         
-        if ($user->academico && $user->academico->status == 1) {
-            return redirect()->route('academico.index')->with('error', 'Ya has generado un formulario.');
-        }
         Academico::create([
             'user_id' => $user->id,
             'matricula' => $request->input('matricula'),
@@ -107,23 +114,23 @@ class AcademicoController extends Controller
             'profesor_id' => $profesor->id,
             'periodo_id' => $periodo->id,
             'materia_recursar' => $request->input('materia_recursar'),
-            'status' => $request->input('status'),
+            'estatus' => 1,
             'version' => $request->input('version'),
             'formato' => $request->input('formato'),
             ]);
 
-            $respuestas = $request->input('respuestas'); 
-            $preguntas_id = $request->input('pregunta_id');
-            
+            $respuestas = $request->input('respuestas');
+
             if (!is_null($respuestas) && is_array($respuestas)) {
-                foreach ($respuestas as $pregunta_id => $respuesta) { 
-                    if($pregunta_id != null){
-                    Respuesta::create([
-                        'respuesta' => $respuesta,
-                        'user_id' => $user->id,
-                        'pregunta_id' => $pregunta_id, 
-                    ]);
-                }
+                foreach ($respuestas as $pregunta_id => $respuesta) {
+                    // Verifica si la respuesta no es nula antes de guardarla
+                    if (!is_null($respuesta) && $respuesta !== '') {
+                        Respuesta::create([
+                            'respuesta' => $respuesta,
+                            'user_id' => $user->id,
+                            'pregunta_id' => $pregunta_id,
+                        ]);
+                    }
                 }
             }
         
@@ -137,12 +144,14 @@ class AcademicoController extends Controller
         //
     }
 
-    public function edit($id)
+    public function edit($id, $version)
     {
         $user = Auth::user();
-        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) {
+        $respuestas = Respuesta::with('pregunta')->where('user_id', $user->id)->whereHas('pregunta', function ($query) use ($version) {
             $query->where('formato', 1);
+            $query->where('version', $version);
         })->get();
+
         $Academico= Academico::find($id);
         $preguntas = $respuestas->pluck('pregunta')->unique();
         $profesor = $Academico->profesor_id;

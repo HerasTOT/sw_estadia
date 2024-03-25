@@ -17,7 +17,10 @@ import {
   mdiAccount,
   mdiBedClock,
   mdiEmoticonHappyOutline ,
-  mdiFileDocumentEditOutline 
+  mdiFileDocumentEditOutline,
+  mdiAccountSchool,
+  mdiHumanMaleBoard,
+  
 
 } from "@mdi/js";
 
@@ -64,11 +67,31 @@ export default [
   }, 
   
   {
-    href:"/usuarios",
-    label: "Usuario",
-    icon: mdiBookshelf,
+    label: "Usuarios",
+    icon: mdiFileDocumentEditOutline ,
     role: "Admin",
-  }, 
+    menu: [
+      {
+        href:"/usuarios",
+        label: "Admin",
+        icon: mdiSecurity,
+        role: "Admin",
+      }, 
+      {
+        href:"/profesor",
+        label: "Profesor",
+        icon: mdiHumanMaleBoard,
+        role: "Admin",
+      }, 
+      {
+        href:"/alumno",
+        label: "Alumno",
+        icon: mdiAccountSchool  ,
+        role: "Admin",
+      }, 
+      
+    ]
+  },
 
   {
     href:"/recursamiento",
@@ -125,7 +148,7 @@ export default [
         role: "Admin",
       }, 
       {
-        href:route('pregunta.habilitar'),
+        href:"/pregunta/habilitar",
         label: "Activar Formularios",
         icon: mdiBookshelf,
         role: "Admin",

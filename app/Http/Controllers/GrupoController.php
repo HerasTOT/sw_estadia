@@ -68,17 +68,24 @@ class GrupoController extends Controller
     {
         $alumnos = Alumno::whereDoesntHave('grupos')->get();
         $grupo = Grupo::find($id);
+        $usuarios = User::has('alumno')->get();
+
+
         return inertia('Grupo/assignGroup', [
             'titulo' => 'Asignar Alumno a Grupo',
             'alumnos' => $alumnos,
             'grupo' => $grupo,
+            'usuarios' => $usuarios,
         ]);
     }
 
     public function assignAlumno(Request $request)
     {
+       
+        $alumno = Alumno::where('user_id', $request['alumno_id'])->first();
         
-        $alumnoId = $request['alumno_id'];
+        $alumnoId = $alumno->id;
+       
         $grupoId = $request['grupo_id'];
 
         Grupo_Alumnos::create([
@@ -91,11 +98,11 @@ class GrupoController extends Controller
         return redirect()->route("{$this->routeName}index")->with('success', 'Alumno asignado al grupo con éxito!');
     }
 
-    public function removeAlumno(Request $request)
+    public function removeAlumno($grupoId, $alumnoId)
 {
-    $alumnoId = $request['alumno_id'];
-    $grupoId = $request['grupo_id'];
-
+    
+    
+    dd($grupoId);
     // Verificar si el alumno está asignado al grupo
     $relacion = Grupo_Alumnos::where('alumno_id', $alumnoId)->where('grupo_id', $grupoId)->first();
 
@@ -241,7 +248,7 @@ class GrupoController extends Controller
         $Grupo->materias()->detach();
         $Grupo->alumnos()->detach();
         $Grupo->delete();
-        return redirect()->route("grupo.index")->with('success', 'Materia eliminada con éxito');
+        return redirect()->route("grupo.index")->with('success', 'Grupo eliminado con éxito');
 
  
     }

@@ -13,9 +13,12 @@ class Inteligencia extends Model
         'matricula',
         'grado',
         'grupo',
-        'tutor',
-        'periodo',
+        'profesor_id',
+        'periodo_id',
         'formato',
-       
-       ];
+        'version',
+        'estatus'
+      ];
+
+      
 }

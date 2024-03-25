@@ -49,7 +49,7 @@ const guardar = () => {
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />
-                    <BaseButton :href="route(`usuarios.index`)" type="reset" color="danger" outline label="Cancelar" />
+                    <BaseButton :href="route(`profesor.index`)" type="reset" color="danger" outline label="Cancelar" />
                 </BaseButtons>
             </template>
         </CardBox>

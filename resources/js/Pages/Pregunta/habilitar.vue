@@ -53,9 +53,6 @@ export default {
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
           
         </SectionTitleLineWithButton>
-
-{{ version }}
-
 <table>
     <thead>
         <tr>
@@ -64,20 +61,23 @@ export default {
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        <tr v-for="version in version" :key="version">
-            <td>{{ version }}</td> 
+  
+
+    <tbody v-for="(versions, formato) in version" :key="formato">
+        <tr v-for="version in versions" :key="version">
+            <td>{{ formato }}</td> 
+            <td>Versión {{ version }}</td> 
             <td>
-                <BaseButton color="warning" :icon="mdiApplicationEdit" small
-                            :href="route('pregunta.habilitar-formulario', {formato_id: 1, version_id: version, estatus: '1'})" />
+                <BaseButton color="warning" :icon="mdiApplicationEdit" small label="Activar formulario" 
+                            :href="route('pregunta.habilitar-formulario', {formato_id: formato, version_id: version, estatus: '1'})" />
             </td>
             <td>
-                <BaseButton color="danger" :icon="mdiApplicationEdit" small
-                            :href="route('pregunta.habilitar-formulario', {formato_id: 1, version_id: version, estatus: '0'})" />
+                <BaseButton color="danger" :icon="mdiApplicationEdit" small label="Desactivar formulario" 
+                            :href="route('pregunta.habilitar-formulario', {formato_id: formato, version_id: version, estatus: '0'})" />
             </td>
         </tr>
-
     </tbody>
+    
 </table>
 
     </LayoutMain>

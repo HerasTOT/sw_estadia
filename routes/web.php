@@ -83,8 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RolesController::class)->names('roles');
     Route::resource('materia', MateriaController::class)->names('materia');
     Route::resource('grupo', GrupoController::class)->names('grupo');
+    //usuarios
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuarios']);
-
+    Route::get('/usuarios/profe', [UsuarioController::class, 'profe'])->name('usuarios.profe');
 
     Route::resource('alumno', AlumnoController::class)->parameters(['alumno' => 'alumno']);
     //Route::post('/alumnos}', [AlumnoController::class, 'store'])->name('alumnos.store');
@@ -93,9 +94,16 @@ Route::middleware('auth')->group(function () {
     //Formatos  Analiis academico individual, habitos 
     Route::resource('academico', AcademicoController::class)->names('academico');
     Route::get('academico/create/{version}', [AcademicoController::class, 'create'])->name('academico.create');
+    Route::get('academico/{id}/edit/{version}', [AcademicoController::class, 'edit'])->name('academico.edit');
 
     Route::resource('habito', HabitoController::class)->names('habito');
+    Route::get('habito/create/{version}', [HabitoController::class, 'create'])->name('habito.create');
+    Route::get('habito/{id}/edit/{version}', [HabitoController::class, 'edit'])->name('habito.edit');
+
     Route::resource('inteligencia', InteligenciaController::class)->names('inteligencia');
+    Route::get('inteligencia/create/{version}', [InteligenciaController::class, 'create'])->name('inteligencia.create');
+    Route::get('inteligencia/{id}/edit/{version}', [InteligenciaController::class, 'edit'])->name('inteligencia.edit');
+
     Route::resource('pregunta', PreguntaController::class)->parameters(['pregunta' => 'pregunta']);
     Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
     Route::get('pregunta/{id}/version/{version_id}', [PreguntaController::class, 'crearnuevapregunta'])->name('pregunta.agregar-pregunta');
@@ -113,7 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('recursamiento', RecursamientoController::class)->parameters(['recursamiento' => 'recursamiento']);
     //asignar estudiantes a grupo
     Route::get('/grupos/{id}/assign-group', [GrupoController::class, 'assignGroupView'])->name('grupos.assign-group.view');
-    Route::post('/grupo/remove-alumno', [GrupoController::class, 'removeAlumno'])->name('grupo.remove-alumno');
+    Route::post('/grupo/{id}/remove-alumno/{userId}', [GrupoController::class, 'removeAlumno'])->name('grupo.remove-alumno');
     Route::post('/gruposAsignacion', [GrupoController::class, 'assignAlumno'])->name('grupos.assign-group.post');
     Route::resource('periodo', PeriodoController::class)->names('periodo');
 

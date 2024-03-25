@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Periodo;
 use App\Http\Requests\StorePeriodoRequest;
 use App\Http\Requests\UpdatePeriodoRequest;
+use App\Models\Academico;
+use App\Models\Habito;
+use App\Models\Inteligencia;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -103,6 +106,19 @@ class PeriodoController extends Controller
    
     public function destroy($id)
     {
+        $hasRelatedRecords = false;
+        if (
+            Habito::where('periodo_id', $id)->exists() ||
+            Academico::where('periodo_id', $id)->exists() 
+            // Agrega más consultas aquí si tienes más tablas relacionadas
+        ) {
+            $hasRelatedRecords = true;
+        }
+    
+        // Si hay registros relacionados, redireccionar con un mensaje de error
+        if ($hasRelatedRecords) {
+            return redirect()->route("periodo.index")->with('error', 'No se puede eliminar el periodo porque tiene registros relacionados.');
+        }
         $periodo=Periodo::find($id);
         $periodo->delete();
         return redirect()->route("periodo.index");
