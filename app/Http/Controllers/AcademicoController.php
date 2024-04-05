@@ -7,6 +7,10 @@ use App\Models\Academico;
 use App\Models\Respuesta;
 use App\Http\Requests\StoreAcademicoRequest;
 use App\Http\Requests\UpdateAcademicoRequest;
+use App\Models\Alumno;
+use App\Models\Grupo;
+use App\Models\Grupo_Alumnos;
+use App\Models\Habilitarversiones;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -37,15 +41,16 @@ class AcademicoController extends Controller
    {
         $user = Auth::user();
         $profesor=Profesor::all();
+        
         $academicoId = $user->academico ? $user->academico->id : null;
         $Academico = $user->Academico;
         
         $Academicos = Academico::where('user_id', $user->id)->get();
-       
-
         
+
        $profesor = $Academico ? Profesor::find($Academico->profesor_id) : null;
        $periodo = $Academico ? Periodo::find($Academico->periodo_id) : null;
+       $grupo = $Academico ? Grupo::find($Academico->grupo_id) : null;
        $usuarioProfesor = $profesor ? User::find($profesor->user_id) : null;
        $versions = DB::table('preguntas')
        ->where('estatus',1)
@@ -56,11 +61,18 @@ class AcademicoController extends Controller
         })->get();
         $preguntas = $respuestas->pluck('pregunta')->unique();
 
+        $alumnoId = Alumno::where('user_id', $user->id)->first(); 
+        $alumnoId = $alumnoId ->id;
+        if($alumnoId){
+        $grupoAlumno = Grupo_Alumnos::where('alumno_id', $alumnoId)->first();
+        $registros = Habilitarversiones::where('grupo_alumno', $grupoAlumno->id)->where('formato',1)->where('estatus',1)->get();
         
-     
+        }
+
        return Inertia::render("Academico/Index", [
            'titulo'      => 'Formato de analisis academico',
            'Academico'    => $Academicos,
+           'grupo'        => $grupo,
            'academicoId' => $academicoId,
            'routeName'      => $this->routeName,
            'preguntas'      => $preguntas,  
@@ -68,11 +80,14 @@ class AcademicoController extends Controller
             'profesor'      =>$usuarioProfesor,
             'periodo'      =>$periodo,
             'versions' => $versions,
+           'version_habilitada' => $registros,
            'loadingResults' => false
        ]);
    }
 
-    
+
+
+    //evaluacionAcademico
     public function create($version)
     {
         
@@ -80,6 +95,7 @@ class AcademicoController extends Controller
         
         $periodo =Periodo::all();
         $usuarios = User::all();
+        $Grupo=Grupo::all();
         $user = auth()->user();
         $existeAcademico = Academico::where('user_id', $user->id)
                                 ->where('version', $version)
@@ -93,6 +109,7 @@ class AcademicoController extends Controller
             'routeName'      => $this->routeName,
             'preguntas'      => $preguntas,
             'periodo' => $periodo,
+            'grupo'   => $Grupo,
             'version' => $version,
             'usuarios' => $usuarios,
         ]);
@@ -105,12 +122,11 @@ class AcademicoController extends Controller
         $user = auth()->user();
         $profesor = User::find($request->input('profesor_id'))->profesor;
         $periodo = Periodo::find($request->input('periodo_id'));
-        
+        $grupo = Grupo::find($request->input('grupo_id'));
         Academico::create([
             'user_id' => $user->id,
-            'matricula' => $request->input('matricula'),
-            'grado' => $request->input('grado'),
-            'grupo' => $request->input('grupo'),
+            'matricula' => $request->input('matricula'),   
+            'grupo_id' => $grupo->id,
             'profesor_id' => $profesor->id,
             'periodo_id' => $periodo->id,
             'materia_recursar' => $request->input('materia_recursar'),
@@ -163,11 +179,13 @@ class AcademicoController extends Controller
         
       
         $periodo = Periodo::all();
+        $grupo = Grupo::all();
         $usuarios = User::all();
         return Inertia::render("Academico/Edit", [
             'titulo'      => 'Modificar formulario',
             'Academico'    => $Academico,
             'respuestas'     => $respuestas,
+            'grupo'         =>$grupo,
             'preguntas'      => $preguntas,  
             'periodo' =>$periodo,
             'usuarios'      =>$usuarios,
@@ -185,8 +203,7 @@ class AcademicoController extends Controller
         $Academico = Academico::find($id);
         $Academico->update([
             'matricula' => $request->input('matricula'),
-            'grado' => $request->input('grado'),
-            'grupo' => $request->input('grupo'),
+            'grupo_id' => $request->input('grupo_id'),
             'materia_recursar' => $request->input('materia_recursar'),
             'status' => $request->input('status'),
             'version' => $request->input('version'),

@@ -12,6 +12,7 @@ class Grupo extends Model
         'grado',
         'grupo',
         'profesor_id',
+        'estatus',
 
     ];
     public function alumnos()

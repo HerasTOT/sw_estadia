@@ -11,16 +11,19 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import FormControlV2 from "@/components/FormControlV2.vue";
 import FormControlV3 from "@/components/FormControlV3.vue";
+import FormControlV6 from "@/components/FormControlV6.vue";
 import Swal from 'sweetalert2';
 import { mdiBallotOutline } from "@mdi/js";
-const props = defineProps(['titulo', 'Academico', 'respuestas', 'usuarios', 'preguntas','periodo', 'routeName', 'profesor']);
+const props = defineProps(['titulo', 'Academico', 'respuestas', 'usuarios','grupo' ,'preguntas','periodo', 'routeName', 'profesor']);
 
 
 const form = useForm({
     ...props.Academico,
     ...props.profesor,
+    ...props.grupo,
     respuestas: {},
-    profesor_id: props.profesor
+    profesor_id: props.profesor,
+    grupo_id: props.grupo
 });
 
 
@@ -68,22 +71,13 @@ function updateFormWithWatchData() {
             </svg>
             </Link>
         </SectionTitleLineWithButton>
+       
         <CardBox form @submit.prevent="handleSubmit">
             <FormField label="Matricula">
                 <FormControl v-model="form.matricula" placeholder="Matricula" />
             </FormField>
-            <FormField label="Grado">
-                <select v-model="form.grado" class="w-full">
-                    <option disabled value="">Selecciona el grado </option>
-                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
-                    <option>7</option> <option>8</option><option>9</option><option>10</option>
-                </select>
-            </FormField>
-            <FormField label="Grupo">
-                <select v-model="form.grupo" class="w-full">
-                    <option disabled value="">Selecciona el grupo</option>
-                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
-                </select>
+            <FormField >
+                <FormControlV6  v-model="form.grupo_id" :showOption="name" :options="grupo"/>
             </FormField>
             <FormField>
                 <FormControlV2 v-model="form.profesor_id" :showOption="name" :options="usuarios" />
@@ -110,7 +104,7 @@ function updateFormWithWatchData() {
 
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="handleSubmit" type="submit" color="info" label="Actualizar" />
+                    <BaseButton @click="handleSubmit" type="submit" color="warning" label="Actualizar" />
                     <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>

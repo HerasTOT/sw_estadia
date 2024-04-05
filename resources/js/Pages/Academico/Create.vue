@@ -11,6 +11,7 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import FormControlV2 from "@/components/FormControlV2.vue";
 import FormControlV3 from "@/components/FormControlV3.vue";
+import FormControlV6 from "@/components/FormControlV6.vue";
 
 
 export default {
@@ -20,6 +21,7 @@ export default {
         routeName: { type: String, required: true },
         preguntas:{type: Object, required: true},
         periodo:{type: Object, required: true},
+        grupo:{type: Object, required: true}, 
         usuarios:{type: Object, required: true},
     },
     components: {
@@ -31,6 +33,7 @@ export default {
         BaseButtons,
         FormControlV2,
         FormControlV3,
+        FormControlV6,
         CardBox,
         SectionTitleLineWithButton
     },
@@ -41,10 +44,9 @@ export default {
 
         const form = useForm({
             matricula: '',
-            grado: '',
-            grupo: '',
             profesor_id:'',
             periodo_id:'',
+            grupo_id:'',
             materia_recursar:'',
             formato: '1',
             version: props.version,
@@ -66,15 +68,9 @@ export default {
     <LayoutMain :title="titulo">
      
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
-            <a :href="`${route(routeName + 'index')}`">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-x" viewBox="0 0 16 16">
-                    <path
-                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1 0-.708z" />
-                </svg>
-            </a>
+            
         </SectionTitleLineWithButton>
-        
+    
         <div>
 
                 <CardBox form @submit.prevent="handleSubmit">
@@ -84,18 +80,8 @@ export default {
 
                     </FormField>
 
-                    <FormField>
-                        <select v-model="form.grado" class="w-full">
-                            <option disabled value="">Selecciona el grado </option>
-                            <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
-                            <option>7</option> <option>8</option><option>9</option><option>10</option>
-                        </select>
-                    </FormField>
-                    <FormField>
-                    <select v-model="form.grupo" class="w-full">
-                        <option disabled value="">Selecciona el grupo</option>
-                        <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
-                    </select>
+                    <FormField >
+                        <FormControlV6  v-model="form.grupo_id" :showOption="name" :options="grupo"/>
                     </FormField>
                     
                     <FormField >
@@ -120,7 +106,7 @@ export default {
                     
                     <template #footer>
                         <BaseButtons>
-                            <BaseButton @click="handleSubmit" type="submit" color="info" label="Crear" />
+                            <BaseButton @click="handleSubmit" type="submit" color="warning" label="Crear" />
                             <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                                 label="Cancelar" />
                         </BaseButtons>
@@ -129,6 +115,7 @@ export default {
             
 
         </div>
+       
     </LayoutMain>
     
     

@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('versionformatos', function (Blueprint $table) {
+        Schema::create('habilitarversiones', function (Blueprint $table) {
             $table->id();
+            $table->integer('estatus');
+            $table->integer('version');
+            $table->integer('formato');
+            $table->foreignId('grupo_alumno')->constrained('grupo_alumnos');
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('versionformatos');
+        Schema::dropIfExists('habilitarversiones');
     }
 };

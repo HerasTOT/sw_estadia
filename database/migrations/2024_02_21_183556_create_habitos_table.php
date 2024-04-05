@@ -17,11 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained(); 
             $table->string('matricula');
-            $table->integer('grado');
-            $table->string('grupo');
             $table->integer('formato');
             $table->integer('version');
             $table->integer('estatus');
+            $table->foreignId('grupo_id')->constrained(); 
             $table->foreignId('profesor_id')->constrained();
             $table->foreignId('periodo_id')->constrained();
             $table->timestamps();

@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Colony;
 use App\Models\Events;
+use App\Models\Grupo;
 use App\Models\Institutions;
 use App\Models\Township;
 use App\Models\Workplace;
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
             MateriaSeeder::class,
             PreguntaSeeder::class,
             PeriodoSeeder::class,
+            GrupoSeeder::class,
 
         ]);
 

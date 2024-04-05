@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Habito;
 use App\Http\Requests\StoreHabitoRequest;
 use App\Http\Requests\UpdateHabitoRequest;
+use App\Models\Alumno;
+use App\Models\Grupo;
+use App\Models\Grupo_Alumnos;
+use App\Models\Habilitarversiones;
 use App\Models\Periodo;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -42,7 +46,7 @@ class HabitoController extends Controller
         $periodo = $habito ? Periodo::find($habito->periodo_id) : null;
         $profesor = $habito ? Profesor::find($habito->profesor_id) : null;
         $usuarioProfesor = $profesor ? User::find($profesor->user_id) : null;
-
+        $grupo = $habito ? Grupo::find($habito->grupo_id) : null;
         $versions = DB::table('preguntas')
             ->where('estatus', 1)
             ->where('formato', 2)
@@ -52,9 +56,16 @@ class HabitoController extends Controller
             $query->where('formato', 2)
             ->where('estatus', 1);
         })->get();
-
+        $alumnoId = Alumno::where('user_id', $user->id)->first();
         $preguntas = $respuestas->pluck('pregunta')->unique();
-
+        $alumnoId = $alumnoId ->id;
+        
+        if($alumnoId){
+        $grupoAlumno = Grupo_Alumnos::where('alumno_id', $alumnoId)->first();
+        
+        $registros = Habilitarversiones::where('grupo_alumno', $grupoAlumno->id)->where('formato',2)->where('estatus',1)->get();
+        
+        }
 
         return Inertia::render("Habito/Index", [
             'titulo'    => 'Formato de habitos de estudio',
@@ -66,6 +77,8 @@ class HabitoController extends Controller
             'profesor'  => $usuarioProfesor,
             'version'   => $versions,
             'periodo'   => $periodo,
+            'grupo'     =>$grupo,
+            'version_habilitada' => $registros,
             'loadingResults' => false
         ]);
     }
@@ -88,6 +101,7 @@ class HabitoController extends Controller
 
         $usuarios = User::all();
         $periodo = Periodo::all();
+        $Grupo=Grupo::all();
         return Inertia::render("Habito/Create", [
             'titulo'      => 'Habitos de estudio',
             'routeName'   => $this->routeName,
@@ -95,6 +109,7 @@ class HabitoController extends Controller
             'usuarios'    => $usuarios,
             'periodo'     => $periodo,
             'version'     => $version,
+            'grupo'   => $Grupo,
             
         ]);
     }
@@ -106,11 +121,11 @@ class HabitoController extends Controller
         $user = auth()->user();
         $profesor = User::find($request->input('profesor_id'))->profesor;
         $periodo = Periodo::find($request->input('periodo_id'));
+        $grupo = Grupo::find($request->input('grupo_id'));
         Habito::create([
             'user_id'     => $user->id,
             'matricula'   => $request->input('matricula'),
-            'grado'       => $request->input('grado'),
-            'grupo'       => $request->input('grupo'),
+            'grupo_id' => $grupo->id,
             'formato'     => $request->input('formato'),
             'profesor_id' => $profesor->id,
             'periodo_id'  => $periodo->id,
@@ -159,6 +174,7 @@ class HabitoController extends Controller
 
         $usuarios = User::all();
         $periodo = Periodo::all();
+        $grupo = Grupo::all();
         return Inertia::render("Habito/Edit", [
             'titulo'      => 'Modificar formato',
             'habito'       => $habito,
@@ -166,6 +182,7 @@ class HabitoController extends Controller
             'preguntas'      => $preguntas,
             'version'        => $version,
             'usuarios'       => $usuarios,
+            'grupo'         =>$grupo,
             'periodo'        => $periodo,
             'profesor'       =>$usuarioProfesor->id,
             'routeName'      => $this->routeName,
@@ -178,8 +195,7 @@ class HabitoController extends Controller
         $profesor = User::find($request->input('profesor_id'))->profesor;
         $habito->update([
             'matricula' => $request->input('matricula'),
-            'grado' => $request->input('grado'),
-            'grupo' => $request->input('grupo'),
+            'grupo_id' => $request->input('grupo_id'),
             'estatus' => $request->input('estatus'),
             'version' => $request->input('version'),
             'formato' => $request->input('formato'),

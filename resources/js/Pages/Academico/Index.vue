@@ -31,7 +31,10 @@ export default {
         preguntas:{ type: Object, required: true },
         periodo:{ type: Object, required: true },
         versions:{ type: Object, required: true },
+        version_habilitada:{ type: Object, required: true },
         academicoId:{ type: String, required: true },
+        grupo:{ type: Object, required: true },
+        estatusgrupo:{ type: String, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -51,8 +54,6 @@ export default {
     setup() {
         const form = useForm({
             matricula: '',
-            grado: '',
-            grupo: '',
             tutor:'',
             periodo:'',
             materia_recursar:'',
@@ -61,29 +62,16 @@ export default {
             version: '',
         });
         const buscarformato = () => {
-            if (form.version) {
-                const url = route('academico.create', { version: form.version });
+    if (form.version) {
+        const url = route('academico.create', { version: form.version.version });
         window.location.href = url;
-                }
-        };
-        const eliminar = (id) => {
-            Swal.fire({
-                title: "¿Esta seguro?",
-                text: "Esta acción no se puede revertir",
-                icon: "warning",
-                showCancelButton: true,
-                cancelButtonColor: "#d33",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "Si!, eliminar registro!",
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    form.delete(route("academico.destroy", id));
-                }
-            });
-        };
+    }
+};
+
+     
 
         return {
-            form, buscarformato,eliminar, mdiMonitorCellphone,
+            form, buscarformato, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -112,25 +100,28 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
+        {{ estatus }}
         <form @submit.prevent="buscarformato">
             <select v-model="form.version">
                 <option value="">Formatos disponibles</option>
-                <option v-for="version in versions" :value="version">{{ version }}</option>
+                <option v-for="version in version_habilitada" :key="version.id" :value="version">
+                    <!-- Aquí se aplica la validación del estatus -->
+                    <template v-if="version.estatus === 1">
+                        {{ version.version }}
+                    </template>
+                </option>
             </select>
             <button type="submit">Generar formato</button>
         </form>
-      
         <CardBox v-for="academico in Academico" :key="academico.id">
-            <template v-if="academico.estatus === 1">
+            <template v-if="academico.estatus === 1  ">
             <div>
                 <div>
                     <strong>Matrícula:</strong> {{ academico.matricula }}
                 </div>
+                
                 <div>
-                    <strong>Grado:</strong> {{ academico.grado }}
-                </div>
-                <div>
-                    <strong>Grupo:</strong> {{ academico.grupo }}
+                    <strong>Grupo:</strong> {{ grupo.grado }} °{{ grupo.grupo }}
                 </div>
                 <div > 
                     <strong>Tutor:</strong> {{ profesor.name }}

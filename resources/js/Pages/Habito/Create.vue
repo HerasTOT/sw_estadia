@@ -11,6 +11,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
+import FormControlV6 from "@/components/FormControlV6.vue";
 
 export default {
     props: {
@@ -20,6 +21,7 @@ export default {
         usuarios:{ type: Object, required: true },
         periodo:{ type: Object, required: true },
         version: { type: String, required: true },
+        grupo:{type: Object, required: true}, 
     },
     components: {
         LayoutMain,
@@ -27,6 +29,7 @@ export default {
         FormControl,
         FormControlV2,
         FormControlV3,
+        FormControlV6,
         BaseDivider,
         BaseButton,
         BaseButtons,
@@ -42,8 +45,7 @@ export default {
 
         const form = useForm({
             matricula: '',
-            grado: '',
-            grupo: '',
+            grupo_id:'',
             profesor_id:'',
             periodo_id:'',
             formato:'2',
@@ -76,19 +78,8 @@ export default {
                 <FormControl v-model="form.matricula" placeholder="Matrícula"/>
     
             </FormField>
-            <FormField>
-                    <select v-model="form.grado" class="w-full">
-                        <option disabled value="">Selecciona el grado </option>
-                        <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
-                        <option>7</option> <option>8</option><option>9</option><option>10</option>
-                    </select>
-             </FormField>
-
-            <FormField>
-                    <select v-model="form.grupo" class="w-full">
-                        <option disabled value="">Selecciona el grupo</option>
-                        <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
-                    </select>
+            <FormField >
+                <FormControlV6  v-model="form.grupo_id" :showOption="name" :options="grupo"/>
             </FormField>
             <FormField >
                 <FormControlV2  v-model="form.profesor_id" :showOption="name" :options="usuarios"/>

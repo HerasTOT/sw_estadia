@@ -7,7 +7,11 @@ use App\Http\Requests\StorePreguntaRequest;
 use App\Http\Requests\UpdatePreguntaRequest;
 use Illuminate\Http\Request;
 use App\Models\Academico;
+use App\Models\Grupo;
+use App\Models\Grupo_Alumnos;
+use App\Models\Habilitarversiones;
 use App\Models\Habito;
+use App\Models\Inteligencia;
 use Illuminate\Support\Facades\DB;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -58,8 +62,6 @@ class PreguntaController extends Controller
 
     public function habilitar()
     {
-        $Pregunta = $this->model;
-        $Pregunta = $Pregunta->where('formato',2);
         $versionsByFormat = [];
         for ($i = 1; $i <= 3; $i++) {
             $formato = '';
@@ -81,23 +83,39 @@ class PreguntaController extends Controller
                                             ->pluck('version')
                                             ->toArray();
         }
-    
-    
+        
+        $user = Auth::user();
+        $grupos = Grupo::whereHas('profesor', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->get();
+
+        $versionsAcademico= DB::table('preguntas')->where('formato', 1)->distinct()->pluck('version')->toArray();
+        $versionsHabito= DB::table('preguntas')->where('formato', 2)->distinct()->pluck('version')->toArray();
+        $versionsInteligencia= DB::table('preguntas')->where('formato', 3)->distinct()->pluck('version')->toArray();
+       
+      
+   
         return Inertia::render("Pregunta/habilitar", [
             'titulo'      => 'Habilitar formularios',
             'routeName'      => $this->routeName,
-            'pregunta'  => $Pregunta,
-            'version'   => $versionsByFormat,
-           
+            'versionAcademico'   => $versionsAcademico,
+            'versionHabito'   => $versionsHabito,
+            'versionInteligencia'   => $versionsInteligencia,
+           'grupos'=>   $grupos,
 
         ]);
 
     }
-    public function habilitarFormulario($formato_id, $version_id, $estatus)
+    public function habilitarFormulario($formato_id, $version_id, $estatus,$grupo_id)
     {
-
-        
-       
+   
+   if ($estatus === 'habilitar') {
+    $estatus = 1;
+    } 
+    if ($estatus === 'deshabilitar') {
+        $estatus = 0;
+    }
+ 
        switch ($formato_id) {
            case 'Formato Análisis académico individual':
                $formato_id = 1;
@@ -110,7 +128,19 @@ class PreguntaController extends Controller
                break;
            
        }
-       
+
+       $registros = Habilitarversiones::whereHas('grupoAlumno', function($query) use ($grupo_id) {
+        $query->where('grupo_id', $grupo_id);
+    })
+    ->where('formato', $formato_id)
+    ->where('version', $version_id)
+    ->get();
+
+    foreach ($registros as $registro) {
+        $registro->update(['estatus' => $estatus]);
+    }
+       Grupo::where('id', $grupo_id)
+        ->update(['estatus' => $estatus]);
         $preguntas = Pregunta::where('formato', $formato_id)
         ->where('version', $version_id)
         ->get();
@@ -121,6 +151,11 @@ class PreguntaController extends Controller
         
         Academico::where('formato', $formato_id)
         ->where('version', $version_id)
+        ->where('grupo_id', $grupo_id)
+        ->update(['estatus' => 0]);
+
+        Inteligencia::where('formato', $formato_id)
+        ->where('version', $version_id)
         ->update(['estatus' => $estatus]);
         
         if ($estatus === '1') {
@@ -129,17 +164,17 @@ class PreguntaController extends Controller
                 $pregunta->estatus = 1;
                 $pregunta->save();
             }
-            return redirect()->route("pregunta.index")->with('success', 'Formulario activado.');
+            return redirect()->route("pregunta.habilitar")->with('success', 'Formulario activado.');
 
         } elseif ($estatus === '0') {
             foreach ($preguntas as $pregunta) {
                 $pregunta->estatus = 0;
                 $pregunta->save();
             }
-            return redirect()->route("pregunta.index")->with('success', 'Formulario desactivado.');
+            return redirect()->route("pregunta.habilitar")->with('success', 'Formulario desactivado.');
 
         } else {
-        return redirect()->route("pregunta.index")->with('error', 'Estatus inválido.');
+        return redirect()->route("pregunta.habilitar")->with('error', 'Estatus inválido.');
         }
 
     }
@@ -179,6 +214,17 @@ class PreguntaController extends Controller
     {
         
         
+        $grupoAlumno = Grupo_Alumnos::all();
+        foreach ($grupoAlumno as $grupoAlumnoId) {
+            Habilitarversiones::create([
+                'estatus'  => 0,
+                'grupo_alumno'  =>  $grupoAlumnoId->id,
+                'formato'  => $request->input('formato'),
+                'version' => $request->input('version'),
+            ]);
+
+        }
+        
         $Formato= $request->input('formato');
         $versionAnterior = Pregunta::where('formato', $Formato)
         ->max('version');
@@ -194,6 +240,7 @@ class PreguntaController extends Controller
             ]);
             $nuevaPregunta->save();
         }
+
     
         $preguntas = $request->input('preguntas');
         foreach ($preguntas as $pregunta) {

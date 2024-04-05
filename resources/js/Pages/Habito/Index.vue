@@ -30,7 +30,9 @@ export default {
         respuestas:{ type: Object, required: true },
         profesor:{ type: Object, required: true },
         periodo:{ type: Object, required: true },
+        version_habilitada:{ type: Object, required: true },
         version:{ type: Object, required: true },
+        grupo:{ type: Object, required: true },
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -50,8 +52,6 @@ export default {
     setup() {
         const form = useForm({
             matricula: '',
-            grado: '',
-            grupo: '',
             tutor:'',
             periodo:'',
             formato:'',
@@ -107,7 +107,12 @@ export default {
         <form @submit.prevent="buscarformato">
             <select v-model="form.version">
                 <option value="">Formatos disponibles</option>
-                <option v-for="version in version" :value="version">{{ version }}</option>
+                <option v-for="version in version_habilitada" :key="version.id" :value="version">
+                    <!-- Aquí se aplica la validación del estatus -->
+                    <template v-if="version.estatus === 1">
+                        {{ version.version }}
+                    </template>
+                </option>
             </select>
             <button type="submit">Generar formato</button>
         </form>
@@ -119,10 +124,7 @@ export default {
                     <strong>Matrícula:</strong> {{ habito.matricula }}
                 </div>
                 <div>
-                    <strong>Grado:</strong> {{ habito.grado }}
-                </div>
-                <div>
-                    <strong>Grupo:</strong> {{ habito.grupo }}
+                    <strong>Grupo:</strong> {{ grupo.grado }} °{{ grupo.grupo }}
                 </div>
                 <div > 
                     <strong>Tutor:</strong> {{ profesor.name }}

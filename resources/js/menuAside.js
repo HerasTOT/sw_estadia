@@ -139,7 +139,7 @@ export default [
   {
     label: "Formularios",
     icon: mdiFileDocumentEditOutline ,
-    role: "Admin",
+    
     menu: [
       {
         href:"/pregunta",
@@ -148,7 +148,7 @@ export default [
         role: "Admin",
       }, 
       {
-        href:"/pregunta/habilitar",
+        route:'pregunta.habilitar',
         label: "Activar Formularios",
         icon: mdiBookshelf,
         role: "Admin",
@@ -156,37 +156,13 @@ export default [
      
     ]
   },
+  
   {
-    label: "Formatos",
-    icon: mdiFileDocumentEditOutline ,
-    role: "Admin",
-    menu: [
-      {
-        href:"/academico",
-        label: "Academico",
-        icon: mdiBookshelf,
-        role: "Admin",
-      }, 
-      {
-        href:"/habito",
-        label: "Habitos",
-        icon: mdiBedClock,
-        role: "Admin",
-      }, 
-      {
-        href:"/encuesta",
-        label: "Encuesta recursamientos",
-        icon: mdiBookshelf,
-        role: "Admin",
-      }, 
-      {
-        href:"/inteligencia",
-        label: "Inteligencia",
-        icon: mdiEmoticonHappyOutline ,
-        role: "Admin",
-      }, 
-    ]
-  }
+    href:"/evaluacion",
+    label: "Evaluación",
+    icon: mdiBookshelf,
+    role: "Tutor",
+  }, 
 
 
 ];

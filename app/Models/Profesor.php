@@ -27,11 +27,11 @@ class Profesor extends Model
         return $this->hasMany(Academico::class, 'profesor_id', 'id');
     }
     public function recursamientos()
-{
+    {
     return $this->hasMany(Recursamiento::class, 'profesor_id');
-}
-public function profeuser()
-{
+    }
+    public function profeuser()
+    {
     return $this->belongsTo(User::class, 'user_id');
-}
+    }
 }

@@ -114,4 +114,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Inteligencia::class);
     }
+    
 }

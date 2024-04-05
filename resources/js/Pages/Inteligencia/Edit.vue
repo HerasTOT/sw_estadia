@@ -7,6 +7,7 @@ import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import FormControlV2 from "@/components/FormControlV2.vue";
 import FormControlV3 from "@/components/FormControlV3.vue";
+import FormControlV6 from "@/components/FormControlV6.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -14,15 +15,16 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Swal from 'sweetalert2';
 import { mdiBallotOutline} from "@mdi/js";
-const props = defineProps(['titulo', 'Inteligencia','respuestas','usuarios','periodo','profesor', 'preguntas','routeName']);
+const props = defineProps(['titulo', 'Inteligencia','respuestas','usuarios','grupo' ,'periodo','profesor', 'preguntas','routeName']);
 
 
 const form = useForm({ 
 ...props.Inteligencia,
 ...props.profesor,
+...props.grupo,
 respuestas:{},
-profesor_id: props.profesor
-
+profesor_id: props.profesor,
+grupo_id: props.grupo
 });
 
 
@@ -69,18 +71,8 @@ function updateFormWithWatchData() {
             <FormField label="Matricula">
                 <FormControl v-model="form.matricula"  placeholder="Matricula"/>
              </FormField>
-             <FormField label="Grado">
-                <select v-model="form.grado" class="w-full">
-                    <option disabled value="">Selecciona el grado </option>
-                    <option>1</option> <option>2</option><option>3</option> <option>4</option> <option>5</option><option>6</option>
-                    <option>7</option> <option>8</option><option>9</option><option>10</option>
-                </select>
-            </FormField>
-            <FormField label="Grupo">
-                <select v-model="form.grupo" class="w-full">
-                    <option disabled value="">Selecciona el grupo</option>
-                    <option>A</option> <option>B</option><option>C</option> <option>D</option> <option>E</option><option>F</option>
-                </select>
+             <FormField >
+                <FormControlV6  v-model="form.grupo_id" :showOption="name" :options="grupo"/>
             </FormField>
             <FormField label="Tutor">
                 <FormControlV2 v-model="form.profesor_id" :showOption="name" :options="usuarios" />

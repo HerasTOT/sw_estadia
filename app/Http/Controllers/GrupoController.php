@@ -11,7 +11,9 @@ use App\Models\Grupo_Materias;
 use App\Http\Requests\StoreGrupoRequest;
 use App\Http\Requests\UpdateGrupoRequest;
 use App\Models\Grupo_Alumnos;
+use App\Models\Habilitarversiones;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Response;
 use Inertia\Inertia;
 
@@ -88,12 +90,42 @@ class GrupoController extends Controller
        
         $grupoId = $request['grupo_id'];
 
-        Grupo_Alumnos::create([
+        $grupoAlumno =  Grupo_Alumnos::create([
             'alumno_id' => $alumnoId,
             'grupo_id' => $grupoId,
+            'estatus'  => 0,
         ]);
-        // $alumno = Alumno::find($alumnoId);
-        // $alumno->grupos()->sync([$grupoId]);
+
+        $grupoAlumnoId = $grupoAlumno->id;
+       
+        $versionsacademico = DB::table('preguntas')->where('formato', 1)->distinct()->pluck('version')->toArray();
+        $versionsHabito = DB::table('preguntas')->where('formato', 2)->distinct()->pluck('version')->toArray();
+        $versionsInteligencia = DB::table('preguntas')->where('formato', 3)->distinct()->pluck('version')->toArray();
+
+        foreach ($versionsacademico as $version) {
+            Habilitarversiones::create([
+                'estatus'  => 0,
+                'grupo_alumno'  =>  $grupoAlumnoId,
+                'formato'  => 1,
+                'version' => $version,
+            ]);
+        }
+        foreach ($versionsHabito as $version) {
+            Habilitarversiones::create([
+                'estatus' => 0,
+                'grupo_alumno' => $grupoAlumnoId,
+                'formato' => 2,
+                'version' => $version,
+            ]);
+        }
+        foreach ($versionsInteligencia as $version) {
+            Habilitarversiones::create([
+                'estatus' => 0,
+                'grupo_alumno' => $grupoAlumnoId,
+                'formato' => 3,
+                'version' => $version,
+            ]);
+        }
     
         return redirect()->route("{$this->routeName}index")->with('success', 'Alumno asignado al grupo con éxito!');
     }
@@ -102,25 +134,24 @@ class GrupoController extends Controller
 {
     
     
-    dd($grupoId);
-    // Verificar si el alumno está asignado al grupo
+
+    
     $relacion = Grupo_Alumnos::where('alumno_id', $alumnoId)->where('grupo_id', $grupoId)->first();
 
     if (!$relacion) {
         return redirect()->route("{$this->routeName}index")->with('error', 'Este alumno no está asignado a este grupo.');
     }
-
-    // Eliminar la relación
+    
+    
+  if ($relacion) {
+    Habilitarversiones::where('grupo_alumno', $relacion->id)->delete();
+}
+  
     $relacion->delete();
 
     return redirect()->route("{$this->routeName}index")->with('success', 'Alumno eliminado del grupo con éxito!');
 }
-    
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         $profesor=Profesor::all();
@@ -133,12 +164,7 @@ class GrupoController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreGrupoRequest  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(StoreGrupoRequest $request)
     {
        
@@ -172,23 +198,12 @@ class GrupoController extends Controller
  
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Grupo  $grupo
-     * @return \Illuminate\Http\Response
-     */
     public function show(Grupo $grupo)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Grupo  $grupo
-     * @return \Illuminate\Http\Response
-     */
+  
     public function edit( $id)
     {
         $Grupo= Grupo::find($id);

@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Alumno;
 use App\Http\Requests\StoreAlumnoRequest;
 use App\Http\Requests\UpdateAlumnoRequest;
+use App\Mail\CrearAlumno;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Mail;
 
 class AlumnoController extends Controller
 {
@@ -72,6 +73,7 @@ class AlumnoController extends Controller
      */
     public function store(StoreAlumnoRequest $request)
     {
+        $password = $request['password'];
         $user_id = $request->input('user_id');
        
        
@@ -93,6 +95,7 @@ class AlumnoController extends Controller
         ]);
     
         $newUser->alumno()->save($alumno);
+        Mail::to($newUser->email)->send(new CrearAlumno($newUser, $password));
 
         return redirect()->route("alumno.index")->with('success', 'Alumno generado con éxito');
   

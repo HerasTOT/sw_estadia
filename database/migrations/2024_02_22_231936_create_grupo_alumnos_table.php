@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('alumno_id')->constrained('alumnos');
             $table->foreignId('grupo_id')->constrained('grupos');
+            $table->integer('estatus');
             $table->timestamps();
         });
     }

@@ -15,15 +15,13 @@ return new class extends Migration
     {
         Schema::create('academicos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(); 
             $table->string('matricula');
-            $table->integer('grado');
-            $table->string('grupo');
-           
             $table->string('materia_recursar');
             $table->integer('estatus');
             $table->integer('version');
             $table->integer('formato');
+            $table->foreignId('grupo_id')->constrained(); 
+            $table->foreignId('user_id')->constrained(); 
             $table->foreignId('periodo_id')->constrained();
             $table->foreignId('profesor_id')->constrained();
             $table->timestamps();

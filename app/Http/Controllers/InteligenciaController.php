@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Inteligencia;
 use App\Http\Requests\StoreInteligenciaRequest;
 use App\Http\Requests\UpdateInteligenciaRequest;
+use App\Models\Alumno;
+use App\Models\Grupo;
+use App\Models\Grupo_Alumnos;
+use App\Models\Habilitarversiones;
 use App\Models\Periodo;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -41,6 +45,7 @@ class InteligenciaController extends Controller
     $profesor = $inteligencia ? Profesor::find($inteligencia->profesor_id) : null;
     $usuarioProfesor = $profesor ? User::find($profesor->user_id) : null;
     $periodo = $inteligencia ? Periodo::find($inteligencia->periodo_id) : null;
+    $grupo = $inteligencia ? Grupo::find($inteligencia->grupo_id) : null;
         $versions = DB::table('preguntas')
         ->where('estatus', 1)
         ->where('formato', 3)
@@ -50,6 +55,14 @@ class InteligenciaController extends Controller
             ->where('estatus', 1);
         })->get();
         $preguntas = $respuestas->pluck('pregunta')->unique();
+
+        $alumnoId = Alumno::where('user_id', $user->id)->first(); 
+        $alumnoId = $alumnoId ->id;
+        if($alumnoId){
+        $grupoAlumno = Grupo_Alumnos::where('alumno_id', $alumnoId)->first();
+        $registros = Habilitarversiones::where('grupo_alumno', $grupoAlumno->id)->where('formato',3)->where('estatus',1)->get();
+        
+        }
        return Inertia::render("Inteligencia/Index", [
            'titulo'      => 'Formato de inteligencias multiples',
            'routeName'      => $this->routeName,
@@ -57,9 +70,11 @@ class InteligenciaController extends Controller
            'inteligenciaId'      => $inteligenciaId,   
            'preguntas' => $preguntas,
            'respuestas' => $respuestas,
-           'version'    => $versions,
+           'versions'    => $versions,
            'profesor'   => $usuarioProfesor,
            'periodo'    => $periodo,
+           'grupo'     =>$grupo,
+           'version_habilitada' => $registros,
            'loadingResults' => false
        ]);
    }
@@ -80,6 +95,7 @@ class InteligenciaController extends Controller
         ->get();
         $usuarios = User::all();
         $periodo = Periodo::all();
+        $Grupo=Grupo::all();
 
         return Inertia::render("Inteligencia/Create", [
             'titulo'      => 'Formato de inteligencias multiples',
@@ -88,6 +104,7 @@ class InteligenciaController extends Controller
             'usuarios'       =>$usuarios,
             'periodo'        =>$periodo,
             'version'        =>$version,
+            'grupo'   => $Grupo,
         ]);
     }
 
@@ -97,11 +114,11 @@ class InteligenciaController extends Controller
         $user = auth()->user();
         $profesor = User::find($request->input('profesor_id'))->profesor;
         $periodo = Periodo::find($request->input('periodo_id'));
+        $grupo = Grupo::find($request->input('grupo_id'));
         Inteligencia::create([
             'user_id'     => $user->id,
             'matricula'   => $request->input('matricula'),
-            'grado'       => $request->input('grado'),
-            'grupo'       => $request->input('grupo'),
+            'grupo_id' => $grupo->id,
             'formato'     => $request->input('formato'),
             'profesor_id' => $profesor->id,
             'periodo_id'  => $periodo->id,
@@ -147,7 +164,7 @@ class InteligenciaController extends Controller
         })->first();
         $usuarios = User::all();
         $periodo = Periodo::all();
-
+        $grupo = Grupo::all();
         $inteligencia= Inteligencia::find($id);
         return Inertia::render("Inteligencia/Edit", [
             'titulo'      => 'Modificar formulario ',
@@ -155,6 +172,7 @@ class InteligenciaController extends Controller
             'respuestas'     => $respuestas,
             'preguntas'      => $preguntas,  
             'version'        => $version,
+            'grupo'         =>$grupo,
             'usuarios'       => $usuarios,
             'periodo'        => $periodo,
             'profesor'       =>$usuarioProfesor->id,
@@ -172,8 +190,7 @@ class InteligenciaController extends Controller
 
         $Inteligencia->update([
             'matricula' => $request->input('matricula'),
-            'grado' => $request->input('grado'),
-            'grupo' => $request->input('grupo'),
+            'grupo_id' => $request->input('grupo_id'),
             'estatus' => $request->input('estatus'),
             'version' => $request->input('version'),
             'formato' => $request->input('formato'),

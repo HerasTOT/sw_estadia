@@ -12,5 +12,7 @@ class Grupo_Alumnos extends Model
     protected $fillable = [
         'alumno_id',
         'grupo_id',
+        'estatus',
     ];
+   
 }

@@ -20,6 +20,7 @@ use App\Http\Controllers\RecursamientoController;
 use App\Http\Controllers\ListaRecursamientoController;
 use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\EncuestaController;
+use App\Http\Controllers\FormatoEvaluacionController;
 use App\Models\Announcements;
 use App\Models\Inteligencia;
 use App\Models\ListaRecursamiento;
@@ -108,8 +109,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('respuesta', RespuestaController::class)->parameters(['respuesta' => 'respuesta']);
     Route::get('pregunta/{id}/version/{version_id}', [PreguntaController::class, 'crearnuevapregunta'])->name('pregunta.agregar-pregunta');
     Route::post('pregunta/crear', [PreguntaController::class, 'storepregunta'])->name('pregunta.store-pregunta');
-    Route::post('pregunta/habilitar', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
-    Route::get('pregunta/{formato_id}/version/{version_id}/estatus/{estatus}', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
+    Route::get('habilitar', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
+    Route::get('pregunta/{formato_id}/version/{version_id}/estatus/{estatus}/grupo/{grupo_id}', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
 
     //Route::get('pregunta/{id}/version/{version_id}/estatus/{estatus}', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
     //Route::get('pregunta/habilitar-formulario', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
@@ -128,10 +129,16 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('lista', ListaRecursamientoController::class)->parameters(['lista' => 'lista']);
     Route::get('/lista/{id}/assign-Alumno', [ListaRecursamientoController::class, 'assignAlumnoRecursamiento'])->name('lista.assign-lista.view');
-    //Route::get('/lista/{id}/delete-Alumno', [ListaRecursamientoController::class, 'deleteAlumnoRecursamiento'])->name('lista.delete-lista.view');
     Route::post('/lista/{id}/eliminar-Alumno/{userId}', [ListaRecursamientoController::class, 'eliminarAlumno'])->name('lista.eliminar-alumno');
 
     Route::resource('encuesta',EncuestaController::class)->parameters(['encuesta'=>'encuesta']);
+    Route::resource('evaluacion', FormatoEvaluacionController::class)->parameters(['evaluacion' => 'evaluacion']);
+    Route::get('evaluacionHabitos', [FormatoEvaluacionController::class, 'evaluacionHabito'])->name('evaluacion.habito');
+    Route::get('evaluacionAcademicos', [FormatoEvaluacionController::class, 'evaluacionAcademico'])->name('evaluacion.academico');
+    Route::get('evaluacionInteligencias', [FormatoEvaluacionController::class, 'evaluacionInteligencia'])->name('evaluacion.inteligencia');
+
+
+
 });
 
 

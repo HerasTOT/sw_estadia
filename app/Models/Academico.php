@@ -9,25 +9,31 @@ class Academico extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id',
         'matricula',
-        'grado',
-        'grupo',
-        'profesor_id',
-        'periodo_id',
+        'grupo_id',
         'materia_recursar',
         'estatus',
         'version',
         'formato',
+        'user_id',
+        'profesor_id',
+        'periodo_id',
        ];
 
        public function profesor()
     {
-        return $this->hasMany(Profesor::class);
+        return $this->belongsTo(Profesor::class, 'profesor_id');
     }
 
     public function user() {
         return $this->belongsTo(User::class);
     }
-
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class);
+    }
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class, 'grupo_id');
+    }
 }

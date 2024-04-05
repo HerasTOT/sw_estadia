@@ -66,7 +66,7 @@ export default {
             });
         };
         const habilitarFormulario = () => {
-            form.post(route("pregunta.habilitar"))
+            form.get(route("pregunta.habilitar"))
                 .then(() => {
                     // Manejar la respuesta del servidor si es necesario
                 })
@@ -92,7 +92,7 @@ export default {
         <SectionTitleLineWithButton  :title="titulo" main>
             
             <BaseButton :href="`pregunta/create`" color="warning" label="Nuevo formulario" />
-            <BaseButton @click="habilitarFormulario" color="warning" label="Habilitar formulario" />
+           
 
         </SectionTitleLineWithButton>
        
