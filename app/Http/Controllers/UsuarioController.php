@@ -16,6 +16,7 @@ use Inertia\Response;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
@@ -63,31 +64,7 @@ class UsuarioController extends Controller
             'loadingResults' => false,
         ]);
     }
-    public function profe(Request $request): Response
-    {
-
-        $alumnos = Alumno::with('user')->get();
-        $profesores = Profesor::with('user')->get();
-        $admin = User::where('role', 'Admin')->get();
-
-        $usuarios = $this->model::with('roles')
-            ->orderBy('id')
-            ->paginate(30)
-            ->withQueryString();
-
-           
-
-        return Inertia::render("Seguridad/Usuarios/indexProfesor", [
-            'titulo'   => ' Usuarios',
-            'usuarios' => $usuarios,
-            'alumnos' => $alumnos,
-            'admin' => $admin,
-            'profesores' => $profesores,
-            'profiles' => Role::get(['id', 'name']),
-            'routeName'=> $this->routeName,
-            'loadingResults' => false,
-        ]);
-    }
+   
     
     public function create()
     {
@@ -102,6 +79,7 @@ class UsuarioController extends Controller
     
     {
         
+
         $newUser = user::create([
             'name' => $request->input('name'),
             'apellido_paterno' => $request->input('apellido_paterno'),
@@ -119,8 +97,50 @@ class UsuarioController extends Controller
   
     }
 
-    
+    public function perfil()
+    {
+        
+        $usuario = Auth::user();
 
+        $alumno = Alumno::where('user_id', $usuario->id)->first();
+        $profesor = Profesor::where('user_id', $usuario->id)->first();
+        return Inertia::render("Seguridad/Usuarios/Perfil", [
+            'titulo'   => 'Modificar Perfil',
+            'usuario'  => $usuario,
+            'alumno'    => $alumno,
+            'profesor'  => $profesor,
+            'routeName'=> $this->routeName,
+        ]);
+    }
+    public function updateperfil(Request $request)
+    {
+        
+       //dd($request->alumno);
+       $usuario = User::find($request->id);
+       $usuario->update($request->all());
+    
+       // Obtén el alumno relacionado con este usuario
+       $alumno = Alumno::where('user_id', $request->id)->first();
+       $profesor = Profesor::where('user_id', $request->id)->first();
+       if ($alumno) {
+       
+        $alumno->update([
+            'cuatrimestre' => $request->alumno['cuatrimestre'],
+            'matricula'    => $request->alumno['matricula'],
+           
+        ]);}
+
+        if ($profesor) {
+          
+            $profesor->update([
+                'area' => $request->profesor['area'],
+                'grado_academico'    => $request->profesor['grado_academico'],
+              
+            ]);
+        }
+        return redirect()->route("usuarios.perfil")->with('success', 'Perfil actualizado');
+
+    }
    
 
    

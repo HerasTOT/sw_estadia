@@ -60,7 +60,7 @@ export default {
         });
         const buscarformato = () => {
             if (form.version) {
-                const url = route('habito.create', { version: form.version });
+                const url = route('habito.create', { version: form.version.version });
         window.location.href = url;
                 }
         };
@@ -104,6 +104,7 @@ export default {
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.error }}
         </NotificationBar>
+        
         <form @submit.prevent="buscarformato">
             <select v-model="form.version">
                 <option value="">Formatos disponibles</option>

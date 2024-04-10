@@ -87,6 +87,8 @@ Route::middleware('auth')->group(function () {
     //usuarios
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuarios']);
     Route::get('/usuarios/profe', [UsuarioController::class, 'profe'])->name('usuarios.profe');
+    Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('usuarios.perfil');
+    Route::post('actualizarPerfil', [UsuarioController::class, 'updatePerfil'])->name('usuarios.update-perfil');
 
     Route::resource('alumno', AlumnoController::class)->parameters(['alumno' => 'alumno']);
     //Route::post('/alumnos}', [AlumnoController::class, 'store'])->name('alumnos.store');
@@ -96,6 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('academico', AcademicoController::class)->names('academico');
     Route::get('academico/create/{version}', [AcademicoController::class, 'create'])->name('academico.create');
     Route::get('academico/{id}/edit/{version}', [AcademicoController::class, 'edit'])->name('academico.edit');
+    Route::get('observaciones', [AcademicoController::class, 'observacion'])->name('academico.observacion');
 
     Route::resource('habito', HabitoController::class)->names('habito');
     Route::get('habito/create/{version}', [HabitoController::class, 'create'])->name('habito.create');
@@ -111,6 +114,9 @@ Route::middleware('auth')->group(function () {
     Route::post('pregunta/crear', [PreguntaController::class, 'storepregunta'])->name('pregunta.store-pregunta');
     Route::get('habilitar', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
     Route::get('pregunta/{formato_id}/version/{version_id}/estatus/{estatus}/grupo/{grupo_id}', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');
+    Route::get('AnalisisPreguntas', [PreguntaController::class, 'gestionAnalisis'])->name('pregunta.academico');
+    Route::get('HabitoPreguntas', [PreguntaController::class, 'gestionHabito'])->name('pregunta.habito');
+    Route::get('InteligenciaPreguntas', [PreguntaController::class, 'gestionInteligencia'])->name('pregunta.inteligencia');
 
     //Route::get('pregunta/{id}/version/{version_id}/estatus/{estatus}', [PreguntaController::class, 'habilitar'])->name('pregunta.habilitar');
     //Route::get('pregunta/habilitar-formulario', [PreguntaController::class, 'habilitarFormulario'])->name('pregunta.habilitar-formulario');

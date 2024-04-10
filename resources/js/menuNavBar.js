@@ -21,7 +21,7 @@ export default [
     isCurrentUser: true,
     menu: [
       {
-        href:"/profile",
+        href:"/perfil",
         icon: mdiAccount,
         label: "Mi perfil",
         to: "/profile",

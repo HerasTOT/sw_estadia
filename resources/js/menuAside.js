@@ -139,7 +139,7 @@ export default [
   {
     label: "Formularios",
     icon: mdiFileDocumentEditOutline ,
-    
+    role: "Admin",
     menu: [
       {
         href:"/pregunta",
@@ -147,14 +147,7 @@ export default [
         icon: mdiBookshelf,
         role: "Admin",
       }, 
-      {
-        route:'pregunta.habilitar',
-        label: "Activar Formularios",
-        icon: mdiBookshelf,
-        role: "Admin",
-      }, 
-     
-    ]
+     ]
   },
   
   {
@@ -162,6 +155,12 @@ export default [
     label: "Evaluación",
     icon: mdiBookshelf,
     role: "Tutor",
+  }, 
+  {
+    route:'academico.observacion',
+    label: "Observacion",
+    icon: mdiBookshelf,
+    role: "Alumno",
   }, 
 
 

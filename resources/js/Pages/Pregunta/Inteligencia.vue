@@ -46,7 +46,7 @@ export default {
     setup(props) {
         const form = useForm({
             pregunta: '',
-            formato: '',
+            formato: 3,
             version: '',
         });
         const versions = props.version;
@@ -58,7 +58,7 @@ export default {
                 showCancelButton: true,
                 cancelButtonColor: "#d33",
                 confirmButtonColor: "#3085d6",
-                confirmButtonText: "Si!, eliminar registro!",
+                confirmButtonText: "Si!, eliminar pregunta!",
             }).then((res) => {
                 if (res.isConfirmed) {
                     form.delete(route("pregunta.destroy", id));
@@ -89,37 +89,74 @@ export default {
 <template>
    
     <LayoutMain>
-        <SectionTitleLineWithButton :title="titulo" main></SectionTitleLineWithButton>
-          
+        <SectionTitleLineWithButton  :title="titulo" main>
+            
+
+        </SectionTitleLineWithButton>
+       
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
-          {{ $page.props.flash.success }}
+            {{ $page.props.flash.success }}
         </NotificationBar>
-          
+
         <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
-          {{ $page.props.flash.error }}
+            {{ $page.props.flash.error }}
         </NotificationBar>
-    
-        <div class="mt-20 flex justify-between">
-          <a href="AnalisisPreguntas" class="border-2 border-yellow-500 hover:bg-purple-700 hover:text-white text-red-500 font-bold h-36 w-80 rounded-lg text-lg flex items-center justify-center">
-            Análisis de académico individual
-          </a>
-          <a :href="`pregunta/create`" class="border-2 border-yellow-500 hover:bg-purple-700 hover:text-white text-red-500 font-bold h-36 w-80 rounded-lg text-lg flex items-center justify-center">
-           Crear nueva versión
-          </a>
-        </div>
-    
-        <div class="mt-20">
-          <a href="HabitoPreguntas" class="border-2 border-yellow-500 hover:bg-purple-700 hover:text-white text-red-500 font-bold h-36 w-80 rounded-lg text-lg flex items-center justify-center">
-            Hábitos de estudio          
-          </a>
-        </div>
-    
-        <div class="mt-20">
-          <a href="InteligenciaPreguntas" class="border-2 border-yellow-500 hover:bg-purple-700 hover:text-white text-red-500 font-bold h-36 w-80 rounded-lg text-lg flex items-center justify-center">
-            Inteligencias múltiples
-          </a>
-        </div>
-  
         
-      </LayoutMain>
+        <CardBox v-if="Pregunta.data.length < 1">
+            <CardBoxComponentEmpty />
+        </CardBox>
+
+        <CardBox v-else class="mb-6" has-table>
+            <form @submit.prevent="buscarPreguntas" class="flex justify-between">
+                <select v-model="form.version">
+                    <option value="">Todas las versiones</option>
+                    <option v-for="version in versions" :value="version">{{ version }}</option>
+                </select>
+                <button type="submit">Buscar</button>
+               
+                <div  class="ml-auto">
+
+                    <BaseButton :href="route('pregunta.agregar-pregunta', { id: form.formato, version_id: form.version })" color="warning" label="Agregar nueva pregunta" />
+
+                </div>
+               
+            </form>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th />
+                        <th>Preguntas</th>
+                       <th>Version</th>
+                        <th></th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in Pregunta.data.filter(item => !form.version || item.version === form.version)" :key="item.id">
+                        <td class="align-items-center">
+                         
+                        </td>
+                        <td >
+                            {{ item.pregunta }}
+                        </td>
+                        <td >
+                            {{ item.version }}
+                        </td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="warning" :icon="mdiApplicationEdit" small
+                                    :href="route(`${routeName}edit`, item.id)" />
+                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+                            </BaseButtons>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <Pagination :currentPage="Pregunta.current_page" :links="Pregunta.links"
+                :total="Pregunta.links.length - 2"></Pagination>
+        </CardBox>
+
+    </LayoutMain>
 </template>

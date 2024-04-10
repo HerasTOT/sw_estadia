@@ -59,7 +59,7 @@ export default {
         });
         const buscarformato = () => {
             if (form.version) {
-                const url = route('inteligencia.create', { version: form.version });
+                const url = route('inteligencia.create', { version: form.version.version });
         window.location.href = url;
                 }
         };
@@ -93,7 +93,7 @@ export default {
 
 <template>
     <LayoutMain>
-        <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
+        <SectionTitleLineWithButton  :title="titulo" main>
 
         </SectionTitleLineWithButton>
        
@@ -117,6 +117,7 @@ export default {
             </select>
             <button type="submit">Generar formato</button>
         </form>
+        
         <CardBox v-for="inteligencia in Inteligencia" :key="inteligencia.id">
             <template v-if="inteligencia.estatus === 1">
             <div>

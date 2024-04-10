@@ -85,7 +85,6 @@ public function evaluacionInteligencia(Request $request): Response
        $grupo = Academico::with('grupo')->get();
       
         $versions = DB::table('preguntas')
-       ->where('estatus',1)
        ->where('formato', 3)
        ->distinct()->pluck('version')->toArray();
        $respuestas = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {
@@ -123,7 +122,7 @@ public function evaluacionInteligencia(Request $request): Response
        $grupo = Academico::with('grupo')->get();
        
         $versions = DB::table('preguntas')
-       ->where('estatus',1)
+      
        ->where('formato', 1)
        ->distinct()->pluck('version')->toArray();
        $respuestas = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {
@@ -162,7 +161,7 @@ public function evaluacionInteligencia(Request $request): Response
        $grupo = Habito::with('grupo')->get();
        
         $versions = DB::table('preguntas')
-       ->where('estatus',1)
+      
        ->where('formato', 2)
        ->distinct()->pluck('version')->toArray();
        $respuestas = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {

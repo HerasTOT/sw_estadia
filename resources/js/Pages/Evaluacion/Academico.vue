@@ -169,6 +169,7 @@ export default {
                             <div v-for="evaluacion in Evaluacion" :key="evaluacion.id">
                               <template v-if="evaluacion.user_id === academico.user.id  && evaluacion.version === academico.version && evaluacion.formato === 1" >
                                 <textarea v-model="evaluacion.respuesta" name="respuesta" class="border border-gray-300 rounded-lg p-2 mt-2 w-full" placeholder="Observación"></textarea>
+                                {{ academico.version }} {{ evaluacion.version }}
                                 <button @click="actualizarObservacion(academico,evaluacion)" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full mt-4">
                                   Actualizar Observación
                               </button>

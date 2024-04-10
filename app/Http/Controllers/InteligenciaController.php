@@ -64,7 +64,7 @@ class InteligenciaController extends Controller
         
         }
        return Inertia::render("Inteligencia/Index", [
-           'titulo'      => 'Formato de inteligencias multiples',
+           'titulo'      => 'Formato de inteligencias múltiples',
            'routeName'      => $this->routeName,
            'Inteligencia'      => $inteligencias, 
            'inteligenciaId'      => $inteligenciaId,   

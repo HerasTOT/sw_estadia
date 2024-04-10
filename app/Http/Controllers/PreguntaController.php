@@ -33,10 +33,48 @@ class PreguntaController extends Controller
     }
     public function index(Request $request): Response
     {
+       
+
+        return Inertia::render("Pregunta/Index", [
+            'titulo'      => 'Gestión de formularios', 
+            'routeName'      => $this->routeName,
+            'loadingResults' => false
+        ]);
+    }
+
+    public function gestionAnalisis(Request $request): Response
+    {
+
+       $Pregunta = $this->model;
+        $Academico = Academico::all();
+       
+        $Pregunta = $Pregunta->where('formato', 1)
+    ->when($request->search, function ($query, $search) {
+        if ($search != '') {
+            $query->where('name', 'LIKE', "%$search%");
+            $query->orWhere('status', 'LIKE', "%$search%");
+        }
+    })->paginate(150)->withQueryString();
+
+        $versions = DB::table('preguntas')->where('formato', 1)->distinct()->pluck('version')->toArray(); 
+        
+
+        return Inertia::render("Pregunta/Academico", [
+            'titulo'      => 'Gestión formulario análisis academico individual',
+            'Pregunta'    => $Pregunta,
+            'Academico'    => $Academico,
+            'routeName'      => $this->routeName,
+            'version' => $versions,
+            'loadingResults' => false
+        ]);
+    }
+
+    public function gestionHabito(Request $request): Response
+    {
         $Pregunta = $this->model;
         $Academico = Academico::all();
         $version = $request->input('version');
-        $Pregunta = $Pregunta->where('formato',1)
+        $Pregunta = $Pregunta->where('formato',2)
         ->when($version, function($query,$version){
             $query->where('version', $version);
 
@@ -47,11 +85,11 @@ class PreguntaController extends Controller
                 $query->orWhere('status', 'LIKE', "%$search%");
             }
         })->paginate(150)->withQueryString();
-        $versions = DB::table('preguntas')->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
+        $versions = DB::table('preguntas')->where('formato', 2)->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
         
 
-        return Inertia::render("Pregunta/Index", [
-            'titulo'      => 'Formulario',
+        return Inertia::render("Pregunta/Habito", [
+            'titulo'      => 'Gestión formulario hábitos de estudio',
             'Pregunta'    => $Pregunta,
             'Academico'    => $Academico,
             'routeName'      => $this->routeName,
@@ -60,6 +98,35 @@ class PreguntaController extends Controller
         ]);
     }
 
+    public function gestionInteligencia(Request $request): Response
+    {
+        
+        $Pregunta = $this->model;
+        $Academico = Academico::all();
+        $version = $request->input('version');
+        $Pregunta = $Pregunta->where('formato',3)
+        ->when($version, function($query,$version){
+            $query->where('version', $version);
+
+        })
+        ->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+                $query->orWhere('status', 'LIKE', "%$search%");
+            }
+        })->paginate(150)->withQueryString();
+        $versions = DB::table('preguntas')->where('formato', 3)->distinct()->pluck('version')->toArray(); // Obtener todas las versiones disponibles
+        
+
+        return Inertia::render("Pregunta/Inteligencia", [
+            'titulo'      => 'Gestión formulario Inteligencias múltiples',
+            'Pregunta'    => $Pregunta,
+            'Academico'    => $Academico,
+            'routeName'      => $this->routeName,
+            'version' => $versions,
+            'loadingResults' => false
+        ]);
+    }
     public function habilitar()
     {
         $versionsByFormat = [];
@@ -190,24 +257,39 @@ class PreguntaController extends Controller
 
     public function crearnuevapregunta($formato, $version)
     {
-        
+
         return Inertia::render("Pregunta/createpregunta", [
             'titulo'      => 'Crear nueva pregunta',
             'routeName'      => $this->routeName,
             'version' => $version,
             'formato' =>  $formato,
         ]);
+        
         return redirect()->route("pregunta.index");
     }
     public function storepregunta(StorePreguntaRequest $request)
     {
+        
+        $versionAcademica = DB::table('preguntas')->where('version', $request->version)->where('formato', $request->formato)->orderBy('id') ->first();
        
         Pregunta::create([
             'pregunta' => $request->input('pregunta'),
             'formato' => $request->input('formato'),
             'version' => $request->input('version'),
+            'estatus' => $versionAcademica->estatus,
         ]);
-        return redirect()->route("pregunta.index")->with('message', 'materia generado con éxito');
+        
+        if ((int)$request->formato === 1) {
+            return redirect()->route("pregunta.academico");
+        }
+        if ((int)$request->formato === 2) {
+            return redirect()->route("pregunta.habito");
+        }
+        if ((int)$request->formato === 3) {
+            return redirect()->route("pregunta.inteligencia");
+        }
+        
+        
     }
     
     public function store(StorePreguntaRequest $request)

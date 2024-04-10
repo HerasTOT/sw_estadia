@@ -8,9 +8,12 @@ use App\Models\Respuesta;
 use App\Http\Requests\StoreAcademicoRequest;
 use App\Http\Requests\UpdateAcademicoRequest;
 use App\Models\Alumno;
+use App\Models\FormatoEvaluacion;
 use App\Models\Grupo;
 use App\Models\Grupo_Alumnos;
 use App\Models\Habilitarversiones;
+use App\Models\Habito;
+use App\Models\Inteligencia;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
@@ -85,7 +88,68 @@ class AcademicoController extends Controller
        ]);
    }
 
+   public function observacion(Request $request): Response
+   {
+    $user = Auth::user();
 
+    $academicos = Academico::where('user_id', $user->id)->with('user', 'grupo')->get();
+    $habitos = Habito::where('user_id', $user->id)->with('user', 'grupo')->get();
+    $inteligencias = Inteligencia::where('user_id', $user->id)->with('user', 'grupo')->get();
+    
+
+    $grupo = Academico::with('grupo')->get();
+    $grupohabitos = Habito::with('grupo')->get();
+    $grupointeligencia = Inteligencia::with('grupo')->get();
+
+
+   $versions = Pregunta::where('estatus', 1)->where('formato', 1)->distinct()->pluck('version')->toArray();
+   $versionHabito = Pregunta::where('estatus', 1)->where('formato', 2)->distinct()->pluck('version')->toArray();
+   $versionInteligencia = Pregunta::where('estatus', 1)->where('formato', 3)->distinct()->pluck('version')->toArray();
+
+   $preguntas = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 1);})->get()->pluck('pregunta')->unique();
+   $preguntasHabito = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 2);})->get()->pluck('pregunta')->unique();
+   $preguntasInteligencia = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 3);})->get()->pluck('pregunta')->unique();
+
+
+   $respuestas = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 1);})->get();
+   $respuestasHabitos = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 2);})->get();
+   $respuestasInteligencia = Respuesta::with('pregunta')->whereHas('pregunta', function ($query) {$query->where('formato', 3);})->get();
+
+
+    $Evaluacion = FormatoEvaluacion::where('formato', 1)->where('user_id', $user->id)->get();
+    $EvaluacionHabitos = FormatoEvaluacion::where('formato', 2)->where('user_id', $user->id)->get();
+    $EvaluacionInteligencia  = FormatoEvaluacion::where('formato', 3)->where('user_id', $user->id)->get();
+
+   return Inertia::render("Academico/Observacion", [
+       'titulo'      => 'Observaciones',
+       'Academico'    => $academicos,
+       'Habito'    => $habitos,
+       'Inteligencia'    => $inteligencias,
+       
+       'grupo'        => $grupo,   
+       'grupoHabito'        => $grupohabitos, 
+       'grupoInteligencia'        => $grupointeligencia, 
+
+       'versions' => $versions,
+       'versionHabito' => $versionHabito,
+       'versionInteligencia' => $versionInteligencia,
+
+       'preguntas'      => $preguntas,  
+       'preguntasHabito'      => $preguntasHabito,  
+       'preguntasInteligencia'      => $preguntasInteligencia,  
+       
+       'respuestas'      => $respuestas,  
+       'respuestasHabito'      => $respuestasHabitos,  
+       'respuestasInteligencia'      => $respuestasInteligencia,  
+
+       'Evaluacion'    => $Evaluacion,
+       'EvaluacionHabito'    => $EvaluacionHabitos,
+       'EvaluacionInteligencia'    => $EvaluacionInteligencia,
+
+       'routeName'      => $this->routeName,
+       'loadingResults' => false
+   ]);
+   }
 
     //evaluacionAcademico
     public function create($version)

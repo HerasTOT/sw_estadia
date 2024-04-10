@@ -94,7 +94,10 @@ export default {
                 <div v-for="pregunta in preguntas" :key="pregunta.id">
                     <template v-if="pregunta.formato === 2">
                         <p style="font-size: 18px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p> 
-                        <FormControl v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id)"/>
+                        <select v-model="form.respuestas[pregunta.id]" @change="guardarRespuesta(pregunta.id) " class="w-full">
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
                         <br>
                     </template>
                 </div>

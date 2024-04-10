@@ -21,7 +21,7 @@ const form = useForm({
 ...props.grupo,
 respuestas:{},
 profesor_id: props.profesor,
-grupo_id: props.grupo
+
 
 });
 
@@ -72,7 +72,7 @@ function updateFormWithWatchData() {
              <FormField >
                 <FormControlV6  v-model="form.grupo_id" :showOption="name" :options="grupo"/>
             </FormField>
-             <FormField label="Tutor">
+             <FormField >
                 <FormControlV2 v-model="form.profesor_id" :showOption="name" :options="usuarios" />
             </FormField>
             <FormField >
@@ -83,12 +83,17 @@ function updateFormWithWatchData() {
                 <div>
                     <p style="font-size: 20px; color: #292929; font-weight: 600;">{{ pregunta.pregunta }}</p>
                     <ul>
-                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuesta.id">
-                            <FormControl v-model="respuesta.respuesta" />
+                        <li v-for="respuesta in respuestas.filter(item => item.pregunta.id === pregunta.id)" :key="respuesta.id" >
+                            <select v-model="respuesta.respuesta"  class="w-full">
+                                <option value="si">Sí</option>
+                                <option value="no">No</option>
+                            </select>
                         </li>
                     </ul>
                 </div>
             </CardBox>
+            
+            
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="handleSubmit" type="submit" color="warning" label="Actualizar" />
